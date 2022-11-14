@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resource/images/Card/Plants/flowercard.png</file>
+        <file>resource/images/Card/Plants/Peashootercard.gif</file>
+        <file>resource/images/Card/Plants/WallNutCard.gif</file>
+        <file>resource/images/interface/background1.jpg</file>
+        <file>resource/images/interface/background2.jpg</file>
+        <file>resource/images/interface/background3.jpg</file>
+        <file>resource/images/interface/background4.jpg</file>
+        <file>resource/images/interface/background5.jpg</file>
+        <file>resource/images/interface/LawnCleaner.png</file>
+        <file>resource/images/interface/SeedBank.png</file>
+        <file>resource/images/interface/SelectorAdventureButton.png</file>
+        <file>resource/images/interface/SelectorBackground.png</file>
+        <file>resource/images/interface/Shovel.png</file>
+        <file>resource/images/interface/ShovelBack.png</file>
+        <file>resource/images/interface/Sun.gif</file>
+        <file>resource/audio/background.mp3</file>
+        <file>resource/images/Seed/IceShooter.png</file>
+        <file>resource/images/Seed/PeaShooter.png</file>
+        <file>resource/images/Seed/Repeater.png</file>
+        <file>resource/images/Seed/seedhead.png</file>
+        <file>resource/images/Seed/SunFlower.png</file>
+        <file>resource/images/Seed/WallNut.png</file>
+        <file>resource/images/interface/mainbackground.jpg</file>
+    </qresource>
+</RCC>
