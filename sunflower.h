@@ -1,18 +1,18 @@
-#ifndef PEASHOOTER_H
-#define PEASHOOTER_H
+#ifndef SUNFLOWER_H
+#define SUNFLOWER_H
 
 #include <QObject>
-#include"globalconfig.h"
 #include"plant.h"
-#include<QPair>
+#include"globalconfig.h"
 
-class Peashooter :public Plant
+class SunFlower : public Plant
 {
     Q_OBJECT
 public:
-    Peashooter(QWidget* parent,int x,int y):Plant(parent,x,y){
-        this->plantmovie=":/resource/images/Plants/Peashooter/Peashooter.gif";
-        this->hp=150;
+    SunFlower(QWidget* parent,int x,int y):Plant(parent,x,y)
+    {
+        this->hp=100;
+        this->plantmovie=":/resource/images/Plants/SunFlower/SunFlower1.gif";
         this->label=new QLabel(this->parent);
         this->movie=new QMovie(plantmovie);
         movie->start();
@@ -20,7 +20,7 @@ public:
         label->setMovie(movie);
         label->move((grasscolpos[y]+grasscolpos[y-1])/2-15,grassrowpos[x-1]/3+grassrowpos[x]*2/3-90);
         label->show();
-        this->actcount=3000;
+        this->actcount=10000;
 
     }
     void act() override;
@@ -31,4 +31,4 @@ signals:
 
 };
 
-#endif // PEASHOOTER_H
+#endif // SUNFLOWER_H

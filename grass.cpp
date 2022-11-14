@@ -21,7 +21,8 @@ Grass::Grass(int r,int c)
     width=grasscolpos[c]-grasscolpos[c-1];
     height=grassrowpos[r]-grassrowpos[r-1];
     qDebug()<<row<<" "<<col<<" "<<x<<""<<y<<" "<<width<<" "<<height;
-
+    plant=NULL;
+    iffree=true;
 }
 
 void Grass::mousePressEvent(QMouseEvent* ev)
@@ -30,6 +31,7 @@ void Grass::mousePressEvent(QMouseEvent* ev)
     {
         QString str =QString("you have press the grass at row= %1 col=%2").arg(row).arg(col);
         qDebug()<<str;
+        emit this->leftclick(row,col);
     }
     else if(ev->button()==Qt::RightButton)
     {

@@ -2,6 +2,9 @@
 #define GRASS_H
 #include<QMouseEvent>
 #include<QLabel>
+#include"plant.h"
+#include"sun.h"
+#include<QVector>
 
 class Grass: public QLabel
 {
@@ -12,7 +15,12 @@ class Grass: public QLabel
     int x,y;
     //宽度高度
     int width,height;
+    //保存存储的植物信息
+
+    bool iffree;
 public:
+    Plant* plant;
+
     Grass();
     Grass(int r,int c);
 
@@ -20,9 +28,15 @@ public:
     int gety(){return y;};
     int getwidth(){return width;};
     int getheight(){return height;};
+    Plant* getplant(){return plant;};
+    bool getiffree(){return iffree;};
+    void setiffree(bool zhi){
+        iffree=zhi;
+    }
 
     void mousePressEvent(QMouseEvent* ev);
 signals:
+    void leftclick(int i,int j);
     void rightclick();
 };
 

@@ -23,7 +23,11 @@ SOURCES += \
     peashooter.cpp \
     plant.cpp \
     plantseed.cpp \
-    widget.cpp
+    sun.cpp \
+    sunflower.cpp \
+    wallnut.cpp \
+    widget.cpp \
+    zombie.cpp
 
 HEADERS += \
     globalconfig.h \
@@ -31,7 +35,11 @@ HEADERS += \
     peashooter.h \
     plant.h \
     plantseed.h \
-    widget.h
+    sun.h \
+    sunflower.h \
+    wallnut.h \
+    widget.h \
+    zombie.h
 
 FORMS += \
     widget.ui
