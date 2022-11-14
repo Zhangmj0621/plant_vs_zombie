@@ -31,4 +31,8 @@ void Grass::mousePressEvent(QMouseEvent* ev)
         QString str =QString("you have press the grass at row= %1 col=%2").arg(row).arg(col);
         qDebug()<<str;
     }
+    else if(ev->button()==Qt::RightButton)
+    {
+        emit this->rightclick();
+    }
 }

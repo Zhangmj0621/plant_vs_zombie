@@ -20,11 +20,17 @@ SOURCES += \
     globalconfig.cpp \
     grass.cpp \
     main.cpp \
+    peashooter.cpp \
+    plant.cpp \
+    plantseed.cpp \
     widget.cpp
 
 HEADERS += \
     globalconfig.h \
     grass.h \
+    peashooter.h \
+    plant.h \
+    plantseed.h \
     widget.h
 
 FORMS += \

@@ -5,6 +5,7 @@
 
 class Grass: public QLabel
 {
+    Q_OBJECT
     //行数和列数
     int row,col;
     //在主场景中的位置
@@ -21,6 +22,8 @@ public:
     int getheight(){return height;};
 
     void mousePressEvent(QMouseEvent* ev);
+signals:
+    void rightclick();
 };
 
 #endif // GRASS_H

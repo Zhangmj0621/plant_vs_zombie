@@ -5,6 +5,9 @@
 #include"grass.h"
 #include"globalconfig.h"
 #include<QDebug>
+#include<QFont>
+#include<QMovie>
+#include"plantseed.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -14,6 +17,10 @@ Widget::Widget(QWidget *parent)
 
     setFixedSize(1500,900);
     setWindowTitle("PVZ");
+
+    setMouseTracking(true);
+
+    selectplantnum=-1;
 
 //    player=new QMediaPlayer(this);
 //    playerlist=new QMediaPlaylist(this);
@@ -42,7 +49,45 @@ Widget::Widget(QWidget *parent)
             newgrass->setParent(this);
             newgrass->setFixedSize(newgrass->getwidth(),newgrass->getheight());
             newgrass->move(newgrass->getx(),newgrass->gety());
+            //监听草丛鼠标右击
+            connect(newgrass,&Grass::rightclick,[=](){
+                setCursor(Qt::ArrowCursor);
+                selectplantnum=-1;
+            });
         }
+
+    //创建阳光label
+    QLabel* sunLabel=new QLabel(this);
+    sunLabel->setText("50");
+    sunLabel->setAlignment(Qt::AlignCenter);
+    //sunLabel->move()101,134,24,99
+    sunLabel->setFixedSize(77,35);
+    sunLabel->move(24,99);
+    QFont font("微软雅黑",15);
+    sunLabel->setFont(font);
+
+    //创建seed槽卡片
+    for(int i=0;i<seednum;i++)
+    {
+        PlantSeed* newseed=new PlantSeed(seedname[i],i+1);
+        newseed->setFixedSize(seedwidth,seedheight);
+        newseed->setParent(this);
+        newseed->move(seedstartx+seedwidth*i,seedstarty);
+        //点击了卡片
+        connect(newseed,&PlantSeed::clickSeed,[=](int num){
+            qDebug()<<"you have enter the clickseend slots!";
+            QPixmap pix;
+            QString str=QString(":/resource/images/Cursor/%1.png").arg(seedname[num-1]);
+            pix.load(str);
+            QSize size(50,50);
+            pix.scaled(size);
+            setCursor(QCursor(pix));
+            selectplantnum=num;
+        });
+    }
+
+
+
 }
 
 Widget::~Widget()
@@ -61,4 +106,12 @@ void Widget::paintEvent(QPaintEvent *)
     pix.load(":/resource/images/interface/SeedBank.png");
 
     painter.drawPixmap(10,10,pix.width()*1.5,pix.height()*1.5,pix);
+}
+
+void Widget::mousePressEvent(QMouseEvent *event){
+    if(event->button()==Qt::RightButton)
+    {
+        setCursor(Qt::ArrowCursor);
+        selectplantnum=-1;
+    }
 }

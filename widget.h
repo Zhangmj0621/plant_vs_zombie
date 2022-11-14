@@ -6,6 +6,7 @@
 #include<QMediaPlayer>
 #include<QMediaPlaylist>
 #include<grass.h>
+#include<QMouseEvent>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -17,12 +18,15 @@ class Widget : public QWidget
     QMediaPlayer* player;
     QMediaPlaylist* playerlist;
     Grass* grass[6][10];
+    int selectplantnum;
 
 public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
     void paintEvent(QPaintEvent *) override;
+    //void mousePressEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     Ui::Widget *ui;
