@@ -18,11 +18,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     globalconfig.cpp \
+    grass.cpp \
     main.cpp \
     widget.cpp
 
 HEADERS += \
     globalconfig.h \
+    grass.h \
     widget.h
 
 FORMS += \

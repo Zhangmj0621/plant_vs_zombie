@@ -5,6 +5,7 @@
 #include <QSound>
 #include<QMediaPlayer>
 #include<QMediaPlaylist>
+#include<grass.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -15,6 +16,7 @@ class Widget : public QWidget
     Q_OBJECT
     QMediaPlayer* player;
     QMediaPlaylist* playerlist;
+    Grass* grass[6][10];
 
 public:
     Widget(QWidget *parent = nullptr);

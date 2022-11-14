@@ -2,6 +2,9 @@
 #include "ui_widget.h"
 #include<QPainter>
 #include<QMediaPlayer>
+#include"grass.h"
+#include"globalconfig.h"
+#include<QDebug>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -28,6 +31,18 @@ Widget::Widget(QWidget *parent)
     player->setVolume(50);
     player->play();
 
+    //创建草坪对象
+    for(int i=1;i<=grassrow;i++)
+        for(int j=1;j<=grasscol;j++)
+        {
+            Grass* newgrass=new Grass(i,j);
+            this->grass[i][j]=newgrass;
+            newgrass->setAttribute(Qt::WA_TranslucentBackground);
+            newgrass->setStyleSheet("background:transparent");
+            newgrass->setParent(this);
+            newgrass->setFixedSize(newgrass->getwidth(),newgrass->getheight());
+            newgrass->move(newgrass->getx(),newgrass->gety());
+        }
 }
 
 Widget::~Widget()
