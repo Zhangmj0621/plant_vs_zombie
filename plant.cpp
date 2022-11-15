@@ -9,8 +9,6 @@ void Plant::hit(Zombie* zombie){
         //僵尸由临战状态变为继续行走
         //草坪状态更新
         //删除植物内存，包括指针等等
-        zombie->setifatk(false);
-        zombie->changewalk();
         emit this->die();   //告诉草坪去更新状态
         delete label;
         delete movie;   //删除额外申请空间

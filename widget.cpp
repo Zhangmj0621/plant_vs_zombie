@@ -160,13 +160,13 @@ Widget::Widget(QWidget *parent)
                     //是否在攻击状态
                     if((*it)->ifheatk())
                     {
-//                        (*it)->now+=30;
-//                        if((*it)->actacount<=(*it)->now)
-//                        {
-//                            grass[i][j]->plant->hit((*it));
+                        (*it)->now+=30;
+                        if((*it)->actacount<=(*it)->now)
+                        {
+                            grass[i][j]->plant->hit((*it));
 
-//                            (*it)->now=0;
-//                        }
+                            (*it)->now=0;
+                        }
                         it++;
                         continue;
                     }
@@ -175,31 +175,42 @@ Widget::Widget(QWidget *parent)
                     {
                         (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
                         //进入新地块
-                        if((*it)->label->x()<=grasscolpos[j-1]-118)
+                        if(j>=2)
                         {
-                            (*it)->sety(j-1);
-                            grass[i][j-1]->zombielist.push_back((*it));
-                            if(grass[i][j-1]->getiffree()==false)
+                            if((*it)->label->x()<=grasscolpos[j-1]-118)
                             {
-                                (*it)->setifatk(true);    //开始攻击
-                                (*it)->changeatk(); //更换gif图像
+                                (*it)->sety(j-1);
+                                grass[i][j-1]->zombielist.push_back((*it));
+                                if(grass[i][j-1]->getiffree()==false)
+                                {
+                                    (*it)->setifatk(true);    //开始攻击
+                                    (*it)->changeatk(); //更换gif图像
+                                }
+                                grass[i][j]->zombielist.erase(it);
                             }
-                            grass[i][j]->zombielist.erase(it);
-                        }
-                        //还可以在本块被阻挡
-                        else if((*it)->label->x()>=grasscolpos[j]-158)
-                        {
-                            if(grass[i][j]->getiffree()==false)
+                            //还可以在本块被阻挡
+                            else if((*it)->label->x()>=grasscolpos[j]-158)
                             {
-                                (*it)->setifatk(true);    //开始攻击
-                                (*it)->changeatk(); //更换gif图像
+                                if(grass[i][j]->getiffree()==false)
+                                {
+                                    (*it)->setifatk(true);    //开始攻击
+                                    (*it)->changeatk(); //更换gif图像
+                                }
+                                it++;
                             }
-                            it++;
+                            //无事发生继续向前
+                            else
+                            {
+                                it++;
+                            }
                         }
-                        //无事发生继续向前
                         else
                         {
-                            it++;
+                            if((*it)->label->x()<=grasscolpos[j-1]-118)
+                            {
+                                //你输了，或者引入小推车
+
+                            }
                         }
                     }
                 }
@@ -328,6 +339,12 @@ void Widget::mousePressEvent(QMouseEvent *event){
              connect(plant,&Plant::die,[=](){
                  grass[i][j]->plant=NULL;
                  grass[i][j]->setiffree(true);
+                 for(QVector<Zombie*>::iterator it=grass[i][j]->zombielist.begin();
+                     it!=grass[i][j]->zombielist.end();it++)
+                 {
+                     (*it)->setifatk(false);
+                     (*it)->changewalk();
+                 }
              });
              setCursor(Qt::ArrowCursor);
              selectplantnum=-1;

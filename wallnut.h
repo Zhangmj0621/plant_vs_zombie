@@ -13,8 +13,8 @@ class WallNut : public Plant
 public:
     WallNut(QWidget* parent,int x,int y):Plant(parent,x,y){
         this->hp=400;
-        this->hit1=":/resource/images/Plants/WallNut/WallNut_cracked1.gif";
-        this->hit2=":/resource/images/Plants/WallNut/WallNut_cracked2.gif";
+        this->hit1=":/resource/images/Plants/WallNut/Wallnut_cracked1.gif";
+        this->hit2=":/resource/images/Plants/WallNut/Wallnut_cracked2.gif";
         this->plantmovie=":/resource/images/Plants/WallNut/WallNut.gif";
         this->label=new QLabel(this->parent);
         this->movie=new QMovie(plantmovie);
