@@ -14,6 +14,7 @@
 #include"wallnut.h"
 #include<QRandomGenerator>
 #include"zombie.h"
+#include<QPropertyAnimation>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -22,6 +23,7 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
 
     //初始化信息
+    sunsum=5000;
     setFixedSize(1500,900);
     setWindowTitle("PVZ");
 
@@ -29,6 +31,7 @@ Widget::Widget(QWidget *parent)
 
     selectplantnum=-1;
     plant=NULL;
+    plantmovie=NULL;
     timer=new QTimer(this);
     timersun=new QTimer(this);
     timer->start(30);
@@ -36,6 +39,43 @@ Widget::Widget(QWidget *parent)
     timerzombie=new QTimer(this);
     timerzombie->start(5000);
 
+    this->islose=false;
+
+
+    //创建失败图片
+    loselabel=new QLabel(this);
+    losepix.load(":/resource/images/interface/ZombiesWon.png");
+    loselabel->setGeometry(0,0,losepix.width(),losepix.height());
+    loselabel->setPixmap(losepix);
+    loselabel->move((this->width()-losepix.width())/2,-losepix.height());
+
+    //动画设置
+    a1=new QPropertyAnimation(loselabel,"geometry");
+    a1->setDuration(1000);
+    a1->setStartValue(QRect(loselabel->x(),loselabel->y(),loselabel->width(),loselabel->height()));
+    a1->setEndValue(QRect(loselabel->x(),-loselabel->y(),loselabel->width(),loselabel->height()));
+    a1->setEasingCurve(QEasingCurve::OutBounce);
+
+
+    //创建开始图片动画
+    startlabel=new QLabel(this);
+    startpix.load(":/resource/images/interface/PrepareGrowPlants.png");
+    startlabel->setGeometry(0,0,startpix.width(),startpix.height());
+    startlabel->setPixmap(startpix);
+    startlabel->move((this->width()-losepix.width())/2,startpix.height());
+
+    //淡入淡出动画
+    m_pGraphicsOpacityEffect = new QGraphicsOpacityEffect(startlabel);
+    m_pGraphicsOpacityEffect->setOpacity(1);
+    startlabel->setGraphicsEffect(m_pGraphicsOpacityEffect);
+
+    a2 = new QPropertyAnimation(m_pGraphicsOpacityEffect,"opacity",this);
+    a2->setEasingCurve(QEasingCurve::InOutExpo);  //淡出效果
+    a2->setDuration(3000);                        //动画时间
+
+    a2->setStartValue(1); //关闭label
+    a2->setEndValue(0);
+    a2->start(QAbstractAnimation::KeepWhenStopped);
 
 //    player=new QMediaPlayer(this);
 //    playerlist=new QMediaPlaylist(this);
@@ -52,6 +92,7 @@ Widget::Widget(QWidget *parent)
     player->setMedia(QUrl::fromLocalFile("D://QT/QTCODE/pvz/resource/audio/background.mp3"));
     player->setVolume(50);
     player->play();
+    playerlist=NULL;
 
     //创建草坪对象
     for(int i=1;i<=grassrow;i++)
@@ -173,7 +214,7 @@ Widget::Widget(QWidget *parent)
                     //在行走中
                     else
                     {
-                        (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
+                        (*it)->label->move((*it)->label->x()-10,(*it)->label->y());
                         //进入新地块
                         if(j>=2)
                         {
@@ -208,13 +249,68 @@ Widget::Widget(QWidget *parent)
                         {
                             if((*it)->label->x()<=grasscolpos[j-1]-118)
                             {
+                                grass[i][j]->zombielist.erase(it);
                                 //你输了，或者引入小推车
+                                //停止所有计时器
+                                this->islose=true;
+                                timersun->stop();
+                                timer->stop();
+                                timerzombie->stop();
+                                //显示失败图片
 
+                                a1->start();
+                                QTimer::singleShot(3000,this,[=](){
+                                    //创建新窗口
+                                    //删除原有内存
+                                    delete player;
+                                    delete playerlist;
+                                    for(int i=1;i<=grassrow;i++)
+                                        for(int j=1;j<=grasscol;j++)
+                                        {
+                                            delete grass[i][j];
+                                        }
+                                    delete plant;
+                                    //delete plantmovie;
+                                    delete sunLabel;
+                                    for(QVector<Sun*>::iterator it=sunlist.begin();
+                                        it!=sunlist.end();)
+                                    {
+                                        Sun* p=(*it);
+                                        sunlist.erase(it);
+                                        delete p;
+                                    }
+                                    delete timer;
+                                    delete timersun;
+                                    delete timerzombie;
+                                    for(QVector<Zombie*>::iterator it=zombielist.begin();
+                                        it!=zombielist.end();)
+                                    {
+                                        Zombie* p=(*it);
+                                        zombielist.erase(it);
+                                        delete p;
+                                    }
+                                    delete loselabel;
+                                    delete startlabel;
+                                    delete a2;
+                                    delete a1;
+                                    sunsum=5000;
+                                    Widget* w2=new Widget();
+                                    w2->show();
+                                    this->close();
+
+                                    this->~Widget();
+
+                                });
+                            }
+                            else
+                            {
+                                it++;
                             }
                         }
                     }
                 }
             }
+
 
     });
 
@@ -282,12 +378,13 @@ void Widget::paintEvent(QPaintEvent *)
 }
 
 void Widget::mousePressEvent(QMouseEvent *event){
-    if(event->button()==Qt::RightButton)
+    if(
+            event->button()==Qt::RightButton)
     {
         setCursor(Qt::ArrowCursor);
         selectplantnum=-1;
     }
-    else if(event->button()==Qt::LeftButton)
+    else if(!islose && event->button()==Qt::LeftButton)
     {
         //判断是否在草丛上
         if(event->x()>=grasscolpos[0]&&event->x()<=grasscolpos[9] && event->y()>=grassrowpos[0]&&event->y()<=grassrowpos[5])

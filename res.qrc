@@ -40,5 +40,8 @@
         <file>resource/images/Zombies/Zombie/ZombieDie.gif</file>
         <file>resource/images/Zombies/Zombie/ZombieLostHead.gif</file>
         <file>resource/images/Zombies/Zombie/ZombieLostHeadAttack.gif</file>
+        <file>resource/images/interface/PrepareGrowPlants.png</file>
+        <file>resource/images/interface/trophy.png</file>
+        <file>resource/images/interface/ZombiesWon.png</file>
     </qresource>
 </RCC>
