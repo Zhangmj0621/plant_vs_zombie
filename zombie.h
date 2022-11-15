@@ -9,17 +9,43 @@
 class Zombie : public QObject
 {
     Q_OBJECT
+protected:
     QWidget* parent;
     int x,y;
     int hp,atk;
-    int actacount;
-    int now;
+
     QString zombiemovie;
     QString attackmovie;
-    QLabel* label;
+    QString diemovie;
+    QString zombieloseheadmovie;
+    QString zombieattackloseheadmovie;
+
     QMovie* movie;
+    bool ifatk;
 public:
+    QLabel* label;
+    int actacount;
+    int now;
+
     Zombie(QWidget* parent,int x);
+
+    int getx(){return x;};
+    int gety(){return y;};
+    void setx(int x){this->x=x;};
+    void sety(int y){this->y=y;};
+    int getatk(){return atk;};
+    int getactacount(){return actacount;};
+    int getnow(){return now;};
+    void setnow(int _now){now=_now;};
+    bool ifheatk(){return ifatk;};
+    void setifatk(bool newif){ifatk=newif;};
+
+
+    void changeatk();
+    void changewalk();
+    virtual void attack();
+
+    virtual void updateinfo();
 
 signals:
 

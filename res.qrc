@@ -35,5 +35,10 @@
         <file>resource/images/Cursor/Peashooter.png</file>
         <file>resource/images/Cursor/SunFlower.png</file>
         <file>resource/images/Cursor/WallNut.png</file>
+        <file>resource/images/Zombies/Zombie/Zombie.gif</file>
+        <file>resource/images/Zombies/Zombie/ZombieAttack.gif</file>
+        <file>resource/images/Zombies/Zombie/ZombieDie.gif</file>
+        <file>resource/images/Zombies/Zombie/ZombieLostHead.gif</file>
+        <file>resource/images/Zombies/Zombie/ZombieLostHeadAttack.gif</file>
     </qresource>
 </RCC>

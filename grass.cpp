@@ -23,6 +23,8 @@ Grass::Grass(int r,int c)
     qDebug()<<row<<" "<<col<<" "<<x<<""<<y<<" "<<width<<" "<<height;
     plant=NULL;
     iffree=true;
+
+
 }
 
 void Grass::mousePressEvent(QMouseEvent* ev)

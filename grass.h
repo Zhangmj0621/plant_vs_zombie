@@ -5,6 +5,7 @@
 #include"plant.h"
 #include"sun.h"
 #include<QVector>
+#include"zombie.h"
 
 class Grass: public QLabel
 {
@@ -20,6 +21,7 @@ class Grass: public QLabel
     bool iffree;
 public:
     Plant* plant;
+    QVector<Zombie*> zombielist;
 
     Grass();
     Grass(int r,int c);

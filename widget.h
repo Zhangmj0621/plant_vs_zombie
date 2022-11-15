@@ -11,6 +11,7 @@
 #include"sun.h"
 #include<QVector>
 #include<QTimer>
+#include"zombie.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -29,6 +30,8 @@ class Widget : public QWidget
     QVector<Sun*>sunlist;
     QTimer* timer;
     QTimer* timersun;
+    QTimer* timerzombie;
+    QVector<Zombie*> zombielist;    //用来保存还未正式进入草地僵尸
 
 public:
     Widget(QWidget *parent = nullptr);

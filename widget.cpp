@@ -13,6 +13,7 @@
 #include"sunflower.h"
 #include"wallnut.h"
 #include<QRandomGenerator>
+#include"zombie.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -32,6 +33,9 @@ Widget::Widget(QWidget *parent)
     timersun=new QTimer(this);
     timer->start(30);
     timersun->start(10000);
+    timerzombie=new QTimer(this);
+    timerzombie->start(5000);
+
 
 //    player=new QMediaPlayer(this);
 //    playerlist=new QMediaPlaylist(this);
@@ -115,16 +119,91 @@ Widget::Widget(QWidget *parent)
             }
 
         //阳光活动
-        QVector<Sun*>::iterator it;
-        for(it=sunlist.begin();it!=sunlist.end();it++)
+        for(QVector<Sun*>::iterator it=sunlist.begin();it!=sunlist.end();it++)
         {
             if((*it)->type==1&& (*it)->btn->y()<=grassrowpos[(*it)->x-1]/3+grassrowpos[(*it)->x]*2/3)
             {
-                qDebug()<<"the desy= "<<grassrowpos[(*it)->x-1]/3+grassrowpos[(*it)->x]*2/3;
+                //qDebug()<<"the desy= "<<grassrowpos[(*it)->x-1]/3+grassrowpos[(*it)->x]*2/3;
                 //qDebug()<<"the sun have to move to "<<(*it)->btn->x()<<" "<<(*it)->btn->y()+0.07;
                 (*it)->btn->move((*it)->btn->x(),(*it)->btn->y()+2);
             }
         }
+
+        //未进入草地僵尸活动
+        for(QVector<Zombie*>::iterator it=zombielist.begin();it!=zombielist.end();)
+        {
+            (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
+            if((*it)->label->x()<=grasscolpos[9]-118)
+            {
+                (*it)->sety(9);
+                grass[(*it)->getx()][9]->zombielist.push_back((*it));
+                if(grass[(*it)->getx()][9]->getiffree()==false)
+                {
+                    (*it)->setifatk(true);    //开始攻击
+                    (*it)->changeatk(); //更换gif图像
+                }
+                zombielist.erase(it);
+            }
+            else
+            {
+                it++;
+            }
+        }
+
+        //进入草地僵尸活动
+        for(int i=1;i<=grassrow;i++)
+            for(int j=1;j<=grasscol;j++)
+            {
+                for(QVector<Zombie*>::iterator it=grass[i][j]->zombielist.begin();
+                    it!=grass[i][j]->zombielist.end();)
+                {
+                    //是否在攻击状态
+                    if((*it)->ifheatk())
+                    {
+//                        (*it)->now+=30;
+//                        if((*it)->actacount<=(*it)->now)
+//                        {
+//                            grass[i][j]->plant->hit((*it));
+
+//                            (*it)->now=0;
+//                        }
+                        it++;
+                        continue;
+                    }
+                    //在行走中
+                    else
+                    {
+                        (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
+                        //进入新地块
+                        if((*it)->label->x()<=grasscolpos[j-1]-118)
+                        {
+                            (*it)->sety(j-1);
+                            grass[i][j-1]->zombielist.push_back((*it));
+                            if(grass[i][j-1]->getiffree()==false)
+                            {
+                                (*it)->setifatk(true);    //开始攻击
+                                (*it)->changeatk(); //更换gif图像
+                            }
+                            grass[i][j]->zombielist.erase(it);
+                        }
+                        //还可以在本块被阻挡
+                        else if((*it)->label->x()>=grasscolpos[j]-158)
+                        {
+                            if(grass[i][j]->getiffree()==false)
+                            {
+                                (*it)->setifatk(true);    //开始攻击
+                                (*it)->changeatk(); //更换gif图像
+                            }
+                            it++;
+                        }
+                        //无事发生继续向前
+                        else
+                        {
+                            it++;
+                        }
+                    }
+                }
+            }
 
     });
 
@@ -161,6 +240,16 @@ Widget::Widget(QWidget *parent)
     });
 
 
+    //随机生成僵尸
+    connect(timerzombie,&QTimer::timeout,[=](){
+        int nxtinterval=QRandomGenerator::global()->bounded(5000,10000);  //下次定时器时间
+        timerzombie->setInterval(nxtinterval);
+        int _x=QRandomGenerator::global()->bounded(1,5);
+        Zombie* newzombie=new Zombie(this,_x);
+        qDebug()<<"you have the new zombie at line "<<_x;
+        newzombie->updateinfo();
+        zombielist.push_back(newzombie);
+    });
 }
 
 Widget::~Widget()
@@ -234,7 +323,12 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  return;
              }
              grass[i][j]->setiffree(false);
+             //草坪监听植物是否死亡
              grass[i][j]->plant=plant;
+             connect(plant,&Plant::die,[=](){
+                 grass[i][j]->plant=NULL;
+                 grass[i][j]->setiffree(true);
+             });
              setCursor(Qt::ArrowCursor);
              selectplantnum=-1;
          }

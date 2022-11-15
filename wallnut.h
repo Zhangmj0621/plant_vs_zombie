@@ -8,9 +8,13 @@
 class WallNut : public Plant
 {
     Q_OBJECT
+    QString hit1;
+    QString hit2;
 public:
     WallNut(QWidget* parent,int x,int y):Plant(parent,x,y){
         this->hp=400;
+        this->hit1=":/resource/images/Plants/WallNut/WallNut_cracked1.gif";
+        this->hit2=":/resource/images/Plants/WallNut/WallNut_cracked2.gif";
         this->plantmovie=":/resource/images/Plants/WallNut/WallNut.gif";
         this->label=new QLabel(this->parent);
         this->movie=new QMovie(plantmovie);
@@ -24,6 +28,7 @@ public:
     void act() override;
     void mousePressEvent(QMouseEvent*) override;
     void paintEvent(QPaintEvent *) override;
+    void hit(Zombie *zombie) override;
 
 signals:
 
