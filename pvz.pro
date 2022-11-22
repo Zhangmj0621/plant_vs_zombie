@@ -17,9 +17,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    bullet.cpp \
     globalconfig.cpp \
     grass.cpp \
     main.cpp \
+    pea.cpp \
     peashooter.cpp \
     plant.cpp \
     plantseed.cpp \
@@ -30,8 +32,10 @@ SOURCES += \
     zombie.cpp
 
 HEADERS += \
+    bullet.h \
     globalconfig.h \
     grass.h \
+    pea.h \
     peashooter.h \
     plant.h \
     plantseed.h \
