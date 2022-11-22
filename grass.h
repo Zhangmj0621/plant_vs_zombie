@@ -6,6 +6,7 @@
 #include"sun.h"
 #include<QVector>
 #include"zombie.h"
+#include"pea.h"
 
 class Grass: public QLabel
 {
@@ -22,7 +23,7 @@ class Grass: public QLabel
 public:
     Plant* plant;
     QVector<Zombie*> zombielist;
-
+    QVector<Bullet*> bulletlist;
     Grass();
     Grass(int r,int c);
 

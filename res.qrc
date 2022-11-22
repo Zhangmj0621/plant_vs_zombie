@@ -43,5 +43,9 @@
         <file>resource/images/interface/PrepareGrowPlants.png</file>
         <file>resource/images/interface/trophy.png</file>
         <file>resource/images/interface/ZombiesWon.png</file>
+        <file>resource/images/Pea/Pea.gif</file>
+        <file>resource/images/Pea/PeaFire.gif</file>
+        <file>resource/images/Pea/PeaHit.gif</file>
+        <file>resource/images/Pea/PeaIce.gif</file>
     </qresource>
 </RCC>

@@ -15,6 +15,8 @@
 #include<QRandomGenerator>
 #include"zombie.h"
 #include<QPropertyAnimation>
+#include"bullet.h"
+#include"pea.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -136,6 +138,10 @@ Widget::Widget(QWidget *parent)
             selectplantnum=num;
         });
     }
+
+    //测试子弹类
+//    Pea* temppea=new Pea(this,50,2,2);
+//    temppea->label->show();
 
     //监听定时器
     connect(timer,&QTimer::timeout,[=](){
@@ -314,8 +320,13 @@ Widget::Widget(QWidget *parent)
 
     });
 
+    //随机子弹
+
     //生成太阳掉落
     connect(timersun,&QTimer::timeout,[=](){
+        Pea* temppea=new Pea(this,50,3,4);
+        grass[1][1]->bulletlist.push_back(temppea);
+
         int _x=QRandomGenerator::global()->bounded(1,5);
         int _y=QRandomGenerator::global()->bounded(1,9);
         Sun* sun=new Sun(this,1,_x,_y);
