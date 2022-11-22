@@ -13,6 +13,7 @@ class WallNut : public Plant
 public:
     WallNut(QWidget* parent,int x,int y):Plant(parent,x,y){
         this->hp=400;
+        this->bh=2;
         this->hit1=":/resource/images/Plants/WallNut/Wallnut_cracked1.gif";
         this->hit2=":/resource/images/Plants/WallNut/Wallnut_cracked2.gif";
         this->plantmovie=":/resource/images/Plants/WallNut/WallNut.gif";

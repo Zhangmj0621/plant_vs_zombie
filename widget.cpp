@@ -39,7 +39,7 @@ Widget::Widget(QWidget *parent)
     timer->start(30);
     timersun->start(10000);
     timerzombie=new QTimer(this);
-    timerzombie->start(5000);
+    timerzombie->start(20000);
 
     this->islose=false;
 
@@ -154,12 +154,34 @@ Widget::Widget(QWidget *parent)
                     grass[i][j]->plant->now+=30;
                     if(grass[i][j]->plant->now<grass[i][j]->plant->actcount)
                     {
+                        //向日葵切换发光和正常
+                        if(grass[i][j]->plant->bh==0&&grass[i][j]->plant->now==8100)
+                        {
+                            grass[i][j]->plant->changelight();
+                        }
                         continue;
                     }
                     else
                     {
                         //进行一次活动
-                        grass[i][j]->plant->act();
+                        if(grass[i][j]->plant->bh==0)
+                        {
+                            grass[i][j]->plant->changegeneral();
+                            Sun* producesun=new Sun(this,0,i,j);
+                            producesun->btn->setStyleSheet("QPushButton{background:rgba(0,0,0,0);border:1px solid rgba(0,0,0,0);}");
+                            producesun->btn->setFixedSize(70,70);
+                            producesun->btn->move((grasscolpos[j]+grasscolpos[j-1])/2,grassrowpos[i-1]/3+grassrowpos[i]*2/3);
+                            producesun->btn->show();
+                            qDebug()<<"sunflower have generate the sun at "<<i<<" "<<j;
+                            //监听点击太阳事件
+                            connect(producesun->btn,&QPushButton::clicked,[=](){
+                                sunsum+=25;
+                                sunLabel->setText(QString::number(sunsum));
+                                delete producesun->btn;
+                                //delete sun->parent;
+                                delete producesun;
+                            });
+                        }
                         grass[i][j]->plant->now=0;
                     }
                 }
@@ -220,7 +242,7 @@ Widget::Widget(QWidget *parent)
                     //在行走中
                     else
                     {
-                        (*it)->label->move((*it)->label->x()-10,(*it)->label->y());
+                        (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
                         //进入新地块
                         if(j>=2)
                         {
@@ -324,8 +346,8 @@ Widget::Widget(QWidget *parent)
 
     //生成太阳掉落
     connect(timersun,&QTimer::timeout,[=](){
-        Pea* temppea=new Pea(this,50,3,4);
-        grass[1][1]->bulletlist.push_back(temppea);
+        //Pea* temppea=new Pea(this,50,3,4);
+        //grass[1][1]->bulletlist.push_back(temppea);
 
         int _x=QRandomGenerator::global()->bounded(1,5);
         int _y=QRandomGenerator::global()->bounded(1,9);

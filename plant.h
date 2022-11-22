@@ -19,6 +19,7 @@ public:
     int hp; //血量和攻击力
     int actcount;   //植物活动一次所需的时间，以s为单位
     int now;    //目前的毫秒数
+    int bh; //0为向日葵，1为豌豆射手，2为坚果，初始赋-1
     QString plantmovie;
     QLabel* label;
     QMovie* movie;
@@ -28,6 +29,7 @@ public:
         this->x=x;
         this->y=y;
         this->now=0;
+        this->bh=-1;
     }
     int getx(){return x;};
     int gety(){return y;};
@@ -36,6 +38,8 @@ public:
     void setactcount(int num){actcount=num;};
     virtual void hit(Zombie* zombie);   //被僵尸攻击
     virtual void act()=0;   //植物活动，向日葵为释放太阳，豌豆射手为攻击
+    virtual void changelight(){};
+    virtual void changegeneral(){};
 signals:
     void die();
 };
