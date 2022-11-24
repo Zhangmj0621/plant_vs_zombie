@@ -164,7 +164,7 @@ Widget::Widget(QWidget *parent)
                     else
                     {
                         //进行一次活动
-                        if(grass[i][j]->plant->bh==0)
+                        if(grass[i][j]->plant->bh==0)//向日葵
                         {
                             grass[i][j]->plant->changegeneral();
                             Sun* producesun=new Sun(this,0,i,j);
@@ -181,6 +181,11 @@ Widget::Widget(QWidget *parent)
                                 //delete sun->parent;
                                 delete producesun;
                             });
+                        }
+                        else if(grass[i][j]->plant->bh==1)//豌豆射手
+                        {
+                            Pea* temppea=new Pea(this,50,i,j);
+                            grass[i][j]->bulletlist.push_back(temppea);
                         }
                         grass[i][j]->plant->now=0;
                     }
@@ -335,6 +340,31 @@ Widget::Widget(QWidget *parent)
                                 it++;
                             }
                         }
+                    }
+                }
+            }
+
+        //子弹活动
+        for(int i=1;i<=grassrow;i++)
+            for(int j=grasscol;j>=1;j--)
+            {
+                for(QVector<Bullet*>::iterator it=grass[i][j]->bulletlist.begin();
+                    it!=grass[i][j]->bulletlist.end();)
+                {
+                    int temp=(*it)->move();
+                    if(temp==0) //正常移动
+                        it++;
+                    else if(temp==1)    //进入下一个地块
+                    {
+                        grass[i][j]->bulletlist.erase(it);
+                        grass[i][j+1]->bulletlist.push_back(*it);
+                    }
+                    else    //移出屏幕了
+                    {
+                        delete (*it)->label;
+                        (*it)->~Bullet();
+                        grass[i][j]->bulletlist.erase(it);
+
                     }
                 }
             }

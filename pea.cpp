@@ -25,7 +25,7 @@ int Pea::move(){
     if(y<=8)
     {
         label->move(label->x()+2,label->y());
-        if(label->x()>=(grasscolpos[y]+grasscolpos[y-1])/2+40)
+        if(label->x()>=(grasscolpos[y]-label->width()+10))
         {
             qDebug()<<"the pea have enter the next grass,x= "<<label->x()<<" y= "<<label->y();
             y++;

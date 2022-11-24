@@ -27,6 +27,7 @@ public:
     virtual int move()=0;   //返回0代表在同一块地上运动，返回1代表进入下一块草地，返回2代表移出边界
 
 signals:
+    void die();
 
 };
 
