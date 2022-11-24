@@ -211,7 +211,7 @@ Widget::Widget(QWidget *parent)
             {
                 (*it)->sety(9);
                 grass[(*it)->getx()][9]->zombielist.push_back((*it));
-                if(grass[(*it)->getx()][9]->getiffree()==false)
+                if(grass[(*it)->getx()][9]->getiffree()==false&&!(*it)->ifdie)
                 {
                     (*it)->setifatk(true);    //开始攻击
                     (*it)->changeatk(); //更换gif图像
@@ -235,7 +235,7 @@ Widget::Widget(QWidget *parent)
                     if((*it)->ifheatk())
                     {
                         (*it)->now+=30;
-                        if((*it)->actacount<=(*it)->now)
+                        if((*it)->actacount<=(*it)->now&&!(*it)->ifdie)
                         {
                             grass[i][j]->plant->hit((*it));
 
@@ -255,7 +255,7 @@ Widget::Widget(QWidget *parent)
                             {
                                 (*it)->sety(j-1);
                                 grass[i][j-1]->zombielist.push_back((*it));
-                                if(grass[i][j-1]->getiffree()==false)
+                                if(grass[i][j-1]->getiffree()==false&&!(*it)->ifdie)
                                 {
                                     (*it)->setifatk(true);    //开始攻击
                                     (*it)->changeatk(); //更换gif图像
@@ -265,7 +265,7 @@ Widget::Widget(QWidget *parent)
                             //还可以在本块被阻挡
                             else if((*it)->label->x()>=grasscolpos[j]-158)
                             {
-                                if(grass[i][j]->getiffree()==false)
+                                if(grass[i][j]->getiffree()==false&&!(*it)->ifdie)
                                 {
                                     (*it)->setifatk(true);    //开始攻击
                                     (*it)->changeatk(); //更换gif图像
@@ -280,7 +280,7 @@ Widget::Widget(QWidget *parent)
                         }
                         else
                         {
-                            if((*it)->label->x()<=grasscolpos[j-1]-118)
+                            if((*it)->label->x()<=grasscolpos[j-1]-118&&!(*it)->ifdie)
                             {
                                 grass[i][j]->zombielist.erase(it);
                                 //你输了，或者引入小推车
@@ -352,17 +352,46 @@ Widget::Widget(QWidget *parent)
                     it!=grass[i][j]->bulletlist.end();)
                 {
                     int temp=(*it)->move();
+                    bool ifbomb=false;
+                    //判断是否与僵尸发生碰撞
                     if(temp==0) //正常移动
-                        it++;
+                    {
+                        int tempx=(*it)->label->x()+(*it)->label->width()-8;
+                        for(QVector<Zombie*>::iterator it2=grass[i][j]->zombielist.begin();
+                            it2!=grass[i][j]->zombielist.end();it2++)
+                        {
+                            if((*it2)->label->x()+118<=tempx)
+                            {
+                                //删除子弹
+                                Bullet* temp=(*it);
+                                temp->changehit();
+
+                                ifbomb=true;
+                                QTimer::singleShot(500,this,[=](){
+                                    qDebug()<<"you have delete the pea";
+                                    delete temp->label;
+                                    delete temp->movie;
+                                    delete temp;
+
+                                });
+                                //触发僵尸被攻击信号
+                                emit (*it2)->hit((*it)->atk);
+                                grass[i][j]->bulletlist.erase(it);
+                            }
+                        }
+                        if(!ifbomb) it++;
+                    }
                     else if(temp==1)    //进入下一个地块
                     {
-                        grass[i][j]->bulletlist.erase(it);
                         grass[i][j+1]->bulletlist.push_back(*it);
+                        grass[i][j]->bulletlist.erase(it);
                     }
                     else    //移出屏幕了
                     {
-                        delete (*it)->label;
-                        (*it)->~Bullet();
+                        Bullet* temp=(*it);
+                        delete temp->label;
+                        delete temp->movie;
+                        delete temp;
                         grass[i][j]->bulletlist.erase(it);
 
                     }
@@ -419,6 +448,26 @@ Widget::Widget(QWidget *parent)
         qDebug()<<"you have the new zombie at line "<<_x;
         newzombie->updateinfo();
         zombielist.push_back(newzombie);
+        connect(newzombie,&Zombie::hit,[=](int atk){
+            newzombie->behit(atk);
+        });
+        connect(newzombie,&Zombie::die,[=](){
+            newzombie->changedie();
+            for(QVector<Zombie*>::iterator it=grass[newzombie->x][newzombie->y]->zombielist.begin();
+                it!=grass[newzombie->x][newzombie->y]->zombielist.end();it++){
+                if((*it)==newzombie)
+                {
+                    grass[newzombie->x][newzombie->y]->zombielist.erase(it);
+                    break;
+                }
+            }
+
+            QTimer::singleShot(500,this,[=](){
+                delete newzombie->label;
+                delete newzombie->movie;
+                delete newzombie;
+            });
+        });
     });
 }
 

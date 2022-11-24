@@ -11,7 +11,7 @@ class Zombie : public QObject
     Q_OBJECT
 protected:
     QWidget* parent;
-    int x,y;
+
     int hp,atk;
 
     QString zombiemovie;
@@ -20,12 +20,15 @@ protected:
     QString zombieloseheadmovie;
     QString zombieattackloseheadmovie;
 
-    QMovie* movie;
+
     bool ifatk;
 public:
+    int x,y;
     QLabel* label;
+    QMovie* movie;
     int actacount;
     int now;
+    bool ifdie;
 
     Zombie(QWidget* parent,int x);
 
@@ -41,14 +44,19 @@ public:
     void setifatk(bool newif){ifatk=newif;};
 
 
+    virtual void behit(int atk);
+
     void changeatk();
     void changewalk();
+    void changedie();
+    void changedelete();
     virtual void attack();
 
     virtual void updateinfo();
 
 signals:
-
+    void hit(int atk);
+    void die();
 };
 
 #endif // ZOMBIE_H

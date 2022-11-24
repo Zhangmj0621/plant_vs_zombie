@@ -37,7 +37,7 @@ public:
     int getactcount(){return actcount;};
     void setactcount(int num){actcount=num;};
     virtual void hit(Zombie* zombie);   //被僵尸攻击
-    virtual void act()=0;   //植物活动，向日葵为释放太阳，豌豆射手为攻击
+    virtual void act(){};   //植物活动，向日葵为释放太阳，豌豆射手为攻击
     virtual void changelight(){};
     virtual void changegeneral(){};
 signals:

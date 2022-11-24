@@ -1,5 +1,7 @@
 #include "zombie.h"
 #include"globalconfig.h"
+#include<QTimer>
+#include<QDebug>
 
 Zombie::Zombie(QWidget* parent,int x)
 {
@@ -7,9 +9,10 @@ Zombie::Zombie(QWidget* parent,int x)
     this->x=x;
     this->y=10;
     this->now=0;
-    this->hp=400;
+    this->hp=250;
     this->atk=50;
     this->now=0;
+    this->ifdie=false;
     this->actacount=1000;
     this->zombiemovie=":/resource/images/Zombies/Zombie/Zombie.gif";
     this->attackmovie=":/resource/images/Zombies/Zombie/ZombieAttack.gif";
@@ -55,4 +58,42 @@ void Zombie::changewalk()
     //label->show();
     delete movie;
     movie=movie1;
+}
+
+void Zombie::changedie(){
+    QMovie* movie1;
+    if(ifatk) movie1=new QMovie(this->zombieattackloseheadmovie);
+    else movie1=new QMovie(this->zombieloseheadmovie);
+    movie1->resized(QSize(50,50));
+    movie1->start();
+    label->setMovie(movie1);
+    //label->show();
+    delete movie;
+    movie=movie1;
+}
+
+void Zombie::changedelete()
+{
+    QMovie* movie1;
+    movie1=new QMovie(this->diemovie);
+    movie1->resized(QSize(50,50));
+    movie1->start();
+    label->setMovie(movie1);
+    //label->show();
+    delete movie;
+    movie=movie1;
+}
+
+void Zombie::behit(int atk){
+    qDebug()<<"the zombie have be hit";
+    if(hp>atk) hp-=atk;
+    else
+    {
+        hp=0;
+        changedie();
+        ifdie=true;
+        QTimer::singleShot(2000,this,[=](){
+            emit this->die();
+        });
+    }
 }

@@ -12,3 +12,13 @@ Bullet::Bullet(QWidget* parent,int atk,int x,int y){
     this->x=x;
     this->y=y;
 }
+
+void Bullet::changehit(){
+    QMovie* movie1=new QMovie(this->hitpix);
+    movie1->resized(QSize(200,200));
+    movie1->start();
+    label->setMovie(movie1);
+    //label->show();
+    delete movie;
+    movie=movie1;
+}
