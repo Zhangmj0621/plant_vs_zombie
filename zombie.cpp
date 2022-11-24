@@ -87,7 +87,7 @@ void Zombie::changedelete()
 void Zombie::behit(int atk){
     qDebug()<<"the zombie have be hit";
     if(hp>atk) hp-=atk;
-    else
+    else if(hp!=0)
     {
         hp=0;
         changedie();

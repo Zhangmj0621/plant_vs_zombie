@@ -367,6 +367,8 @@ Widget::Widget(QWidget *parent)
                                 temp->changehit();
 
                                 ifbomb=true;
+                                emit (*it2)->hit((*it)->atk);
+                                grass[i][j]->bulletlist.erase(it);
                                 QTimer::singleShot(500,this,[=](){
                                     qDebug()<<"you have delete the pea";
                                     delete temp->label;
@@ -374,9 +376,9 @@ Widget::Widget(QWidget *parent)
                                     delete temp;
 
                                 });
+                                break;
                                 //触发僵尸被攻击信号
-                                emit (*it2)->hit((*it)->atk);
-                                grass[i][j]->bulletlist.erase(it);
+
                             }
                         }
                         if(!ifbomb) it++;
