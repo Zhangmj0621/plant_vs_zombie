@@ -17,6 +17,7 @@
 #include<QPropertyAnimation>
 #include"bullet.h"
 #include"pea.h"
+#include"getmap.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -40,6 +41,9 @@ Widget::Widget(QWidget *parent)
     timersun->start(10000);
     timerzombie=new QTimer(this);
     timerzombie->start(20000);
+    //僵尸每行数量初值设为0
+    for(int i=1;i<=5;i++)
+        num_of_zombies[i]=0;
 
     this->islose=false;
 
@@ -182,7 +186,7 @@ Widget::Widget(QWidget *parent)
                                 delete producesun;
                             });
                         }
-                        else if(grass[i][j]->plant->bh==1)//豌豆射手
+                        else if(grass[i][j]->plant->bh==1&&num_of_zombies[i]!=0)//豌豆射手
                         {
                             Pea* temppea=new Pea(this,50,i,j);
                             grass[i][j]->bulletlist.push_back(temppea);
@@ -210,6 +214,7 @@ Widget::Widget(QWidget *parent)
             if((*it)->label->x()<=grasscolpos[9]-118)
             {
                 (*it)->sety(9);
+                num_of_zombies[(*it)->getx()]++;
                 grass[(*it)->getx()][9]->zombielist.push_back((*it));
                 if(grass[(*it)->getx()][9]->getiffree()==false&&!(*it)->ifdie)
                 {
@@ -381,6 +386,33 @@ Widget::Widget(QWidget *parent)
 
                             }
                         }
+                        if(!ifbomb&&(*it)->y==9)
+                        {
+                            for(QVector<Zombie*>::iterator it2=zombielist.begin();
+                                it2!=zombielist.end();it2++)
+                            {
+                                if((*it2)->getx()==(*it)->x&&(*it2)->label->x()+118<=tempx)
+                                {
+                                    //删除子弹
+                                    Bullet* temp=(*it);
+                                    temp->changehit();
+
+                                    ifbomb=true;
+                                    emit (*it2)->hit((*it)->atk);
+                                    grass[i][j]->bulletlist.erase(it);
+                                    QTimer::singleShot(500,this,[=](){
+                                        qDebug()<<"you have delete the pea";
+                                        delete temp->label;
+                                        delete temp->movie;
+                                        delete temp;
+
+                                    });
+                                    break;
+                                    //触发僵尸被攻击信号
+
+                                }
+                            }
+                        }
                         if(!ifbomb) it++;
                     }
                     else if(temp==1)    //进入下一个地块
@@ -410,8 +442,8 @@ Widget::Widget(QWidget *parent)
         //Pea* temppea=new Pea(this,50,3,4);
         //grass[1][1]->bulletlist.push_back(temppea);
 
-        int _x=QRandomGenerator::global()->bounded(1,5);
-        int _y=QRandomGenerator::global()->bounded(1,9);
+        int _x=QRandomGenerator::global()->bounded(1,6);
+        int _y=QRandomGenerator::global()->bounded(1,10);
         Sun* sun=new Sun(this,1,_x,_y);
         sun->btn->setStyleSheet("QPushButton{background:rgba(0,0,0,0);border:1px solid rgba(0,0,0,0);}");
         sun->btn->setFixedSize(70,70);
@@ -445,7 +477,7 @@ Widget::Widget(QWidget *parent)
     connect(timerzombie,&QTimer::timeout,[=](){
         int nxtinterval=QRandomGenerator::global()->bounded(5000,10000);  //下次定时器时间
         timerzombie->setInterval(nxtinterval);
-        int _x=QRandomGenerator::global()->bounded(1,5);
+        int _x=QRandomGenerator::global()->bounded(1,6);
         Zombie* newzombie=new Zombie(this,_x);
         qDebug()<<"you have the new zombie at line "<<_x;
         newzombie->updateinfo();
@@ -455,12 +487,28 @@ Widget::Widget(QWidget *parent)
         });
         connect(newzombie,&Zombie::die,[=](){
             newzombie->changedie();
-            for(QVector<Zombie*>::iterator it=grass[newzombie->x][newzombie->y]->zombielist.begin();
-                it!=grass[newzombie->x][newzombie->y]->zombielist.end();it++){
-                if((*it)==newzombie)
+            if(newzombie->gety()!=10)
+            {
+                num_of_zombies[newzombie->getx()]--;
+                for(QVector<Zombie*>::iterator it=grass[newzombie->x][newzombie->y]->zombielist.begin();
+                    it!=grass[newzombie->x][newzombie->y]->zombielist.end();it++){
+                    if((*it)==newzombie)
+                    {
+                        grass[newzombie->x][newzombie->y]->zombielist.erase(it);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for(QVector<Zombie*>::iterator it=zombielist.begin();
+                    it!=zombielist.end();it++)
                 {
-                    grass[newzombie->x][newzombie->y]->zombielist.erase(it);
-                    break;
+                    if((*it)==newzombie)
+                    {
+                        zombielist.erase(it);
+                        break;
+                    }
                 }
             }
 
@@ -475,6 +523,8 @@ Widget::Widget(QWidget *parent)
 
 Widget::~Widget()
 {
+    GetMap getmap;
+    getmap.writemap();
     delete ui;
 }
 

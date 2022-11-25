@@ -43,6 +43,7 @@ class Widget : public QWidget
     QPixmap startpix;
     QPropertyAnimation* a1;
     QPropertyAnimation* a2;
+    int num_of_zombies[6];
 
     QGraphicsOpacityEffect* m_pGraphicsOpacityEffect;
 

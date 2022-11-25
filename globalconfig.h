@@ -2,6 +2,7 @@
 #define GLOBALCONFIG_H
 #include<QString>
 #include<QPair>
+#include<QDir>
 
 extern int grassrow;
 extern int grasscol;
@@ -21,6 +22,10 @@ extern int plantheight;
 extern int plantwidth;
 
 extern int sunsum;
+
+extern bool mapbool[6][10];
+
+extern QDir qdir;
 
 QPair<int,int> thegrass(int x,int y);
 #endif // GLOBALCONFIG_H

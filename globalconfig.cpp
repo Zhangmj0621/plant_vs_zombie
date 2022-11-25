@@ -43,3 +43,10 @@ QPair<int,int> thegrass(int x,int y){
 
     return QPair<int,int>(g_r,g_c);
 }
+\
+//地图哪里可以放植物
+bool mapbool[6][10];
+
+//存放目录信息
+QDir qdir;
+

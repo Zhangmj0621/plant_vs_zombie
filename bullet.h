@@ -15,8 +15,9 @@ protected:
     QString flypix;
     QString hitpix;
 
-    int x,y;    //  在那个草丛
+
 public:
+    int x,y;    //  在那个草丛
     QLabel* label;
     QMovie* movie;
     int atk;

@@ -26,7 +26,7 @@ Pea::Pea(QWidget* parent,int atk,int x,int y):Bullet(parent,atk,x,y){
 int Pea::move(){
     if(y<=8)
     {
-        label->move(label->x()+7,label->y());
+        label->move(label->x()+10,label->y());
         if(label->x()>=(grasscolpos[y]-label->width()+10))
         {
             qDebug()<<"the pea have enter the next grass,x= "<<label->x()<<" y= "<<label->y();
@@ -40,7 +40,7 @@ int Pea::move(){
     }
     else
     {
-        label->move(label->x()+7,label->y());
+        label->move(label->x()+10,label->y());
         if(label->x()>=parent->width())
         {
             return 2;
