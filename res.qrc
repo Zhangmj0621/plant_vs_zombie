@@ -48,5 +48,18 @@
         <file>resource/images/Pea/PeaHit.gif</file>
         <file>resource/images/Pea/PeaIce.gif</file>
         <file>resource/images/interface/crater1.png</file>
+        <file>resource/images/Plants/TwinSunflower/0.gif</file>
+        <file>resource/images/Plants/TwinSunflower/TwinSunflower1.gif</file>
+        <file>resource/images/Plants/TwinSunflower/TwinSunflower2.gif</file>
+        <file>resource/images/Plants/TallNut/0.gif</file>
+        <file>resource/images/Plants/TallNut/TallNut.gif</file>
+        <file>resource/images/Plants/TallNut/TallnutCracked1.gif</file>
+        <file>resource/images/Plants/TallNut/TallnutCracked2.gif</file>
+        <file>resource/images/Plants/Repeater/0.gif</file>
+        <file>resource/images/Plants/Repeater/Repeater.gif</file>
+        <file>resource/images/Plants/SnowPea/0.gif</file>
+        <file>resource/images/Plants/SnowPea/SnowPea.gif</file>
+        <file>resource/images/Plants/GatlingPea/0.gif</file>
+        <file>resource/images/Plants/GatlingPea/GatlingPea.gif</file>
     </qresource>
 </RCC>

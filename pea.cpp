@@ -16,7 +16,7 @@ Pea::Pea(QWidget* parent,int atk,int x,int y):Bullet(parent,atk,x,y){
     label->setScaledContents(true);
     label->show();
     //label->move((grasscolpos[y]+grasscolpos[y-1])/2-label->width()/2,grassrowpos[x-1]/3+grassrowpos[x]*2/3-70);
-    label->move(grasscolpos[y]-label->width()+8,grassrowpos[x-1]/3+grassrowpos[x]*2/3-70);
+    label->move(grasscolpos[y]-label->width()-30,grassrowpos[x-1]/3+grassrowpos[x]*2/3-70);
     qDebug()<<label->width();
     //label->move(grasscolpos[y]-35,grassrowpos[x-1]/3+grassrowpos[x]*2/3-70);
     //label->move(parent->width()/2,80);

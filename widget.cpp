@@ -41,7 +41,7 @@ Widget::Widget(QWidget *parent)
     timer->start(30);
     timersun->start(10000);
     timerzombie=new QTimer(this);
-    timerzombie->start(20000);
+    timerzombie->start(5000);
     //僵尸每行数量初值设为0
     for(int i=1;i<=5;i++)
         num_of_zombies[i]=0;
@@ -221,10 +221,13 @@ Widget::Widget(QWidget *parent)
         for(QVector<Zombie*>::iterator it=zombielist.begin();it!=zombielist.end();)
         {
             (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
+            if((*it)->label->x()==grasscolpos[9]){
+                num_of_zombies[(*it)->getx()]++;
+            }
             if((*it)->label->x()<=grasscolpos[9]-118)
             {
                 (*it)->sety(9);
-                num_of_zombies[(*it)->getx()]++;
+                //num_of_zombies[(*it)->getx()]++;
                 grass[(*it)->getx()][9]->zombielist.push_back((*it));
                 if(grass[(*it)->getx()][9]->getiffree()==false&&!(*it)->ifdie)
                 {
@@ -375,7 +378,7 @@ Widget::Widget(QWidget *parent)
                         for(QVector<Zombie*>::iterator it2=grass[i][j]->zombielist.begin();
                             it2!=grass[i][j]->zombielist.end();it2++)
                         {
-                            if((*it2)->label->x()+118<=tempx)
+                            if((*it2)->label->x()+80<=tempx)
                             {
                                 //删除子弹
                                 Bullet* temp=(*it);
@@ -401,7 +404,7 @@ Widget::Widget(QWidget *parent)
                             for(QVector<Zombie*>::iterator it2=zombielist.begin();
                                 it2!=zombielist.end();it2++)
                             {
-                                if((*it2)->getx()==(*it)->x&&(*it2)->label->x()+118<=tempx)
+                                if((*it2)->getx()==(*it)->x&&(*it2)->label->x()+80<=tempx)
                                 {
                                     //删除子弹
                                     Bullet* temp=(*it);
@@ -549,6 +552,8 @@ void Widget::paintEvent(QPaintEvent *)
     pix.load(":/resource/images/interface/SeedBank.png");
 
     painter.drawPixmap(10,10,pix.width()*1.5,pix.height()*1.5,pix);
+
+    painter.drawPixmap(this->width()-pix.width()-10,10,pix.width(),pix.height(),pix);
 }
 
 void Widget::mousePressEvent(QMouseEvent *event){
