@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     bullet.cpp \
+    crator.cpp \
     getmap.cpp \
     globalconfig.cpp \
     grass.cpp \
@@ -34,6 +35,7 @@ SOURCES += \
 
 HEADERS += \
     bullet.h \
+    crator.h \
     getmap.h \
     globalconfig.h \
     grass.h \

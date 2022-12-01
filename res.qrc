@@ -47,5 +47,6 @@
         <file>resource/images/Pea/PeaFire.gif</file>
         <file>resource/images/Pea/PeaHit.gif</file>
         <file>resource/images/Pea/PeaIce.gif</file>
+        <file>resource/images/interface/crater1.png</file>
     </qresource>
 </RCC>

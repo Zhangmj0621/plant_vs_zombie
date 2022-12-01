@@ -18,6 +18,7 @@
 #include"bullet.h"
 #include"pea.h"
 #include"getmap.h"
+#include"crator.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -104,13 +105,22 @@ Widget::Widget(QWidget *parent)
     for(int i=1;i<=grassrow;i++)
         for(int j=1;j<=grasscol;j++)
         {
-            Grass* newgrass=new Grass(i,j);
+            Grass* newgrass=new Grass(i,j,mapbool[i][j]);
             this->grass[i][j]=newgrass;
             //监听草丛鼠标右击
 //            connect(newgrass,&Grass::rightclick,[=](){
 //                setCursor(Qt::ArrowCursor);
 //                selectplantnum=-1;
 //            });
+        }
+
+    //生成不能放植物的格子
+    for(int i=1;i<=grassrow;i++)
+        for(int j=1;j<=grasscol;j++)
+        {
+            if(!mapbool[i][j]){
+                Crator* newcrator=new Crator(this,i,j);
+            }
         }
 
     //创建阳光label
@@ -563,7 +573,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
 
  void Widget::putdownplant(int i,int j)
  {
-     if(grass[i][j]->getiffree())
+     if(grass[i][j]->getiffree()&&grass[i][j]->getifput())
      {
          if(selectplantnum!=-1)
          {

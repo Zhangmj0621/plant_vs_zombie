@@ -12,7 +12,7 @@ Grass::Grass()
     height=0;
 }
 
-Grass::Grass(int r,int c)
+Grass::Grass(int r,int c,bool able)
 {
     row=r;
     col=c;
@@ -23,7 +23,7 @@ Grass::Grass(int r,int c)
     qDebug()<<row<<" "<<col<<" "<<x<<""<<y<<" "<<width<<" "<<height;
     plant=NULL;
     iffree=true;
-
+    ifput=able;
 
 }
 

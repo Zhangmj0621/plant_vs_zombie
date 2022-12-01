@@ -17,15 +17,18 @@ class Grass: public QLabel
     int x,y;
     //宽度高度
     int width,height;
-    //保存存储的植物信息
 
+    //是否空
     bool iffree;
+    //是否可以放植物（地图方面）
+    bool ifput;
 public:
+    //保存存储的植物信息
     Plant* plant;
     QVector<Zombie*> zombielist;
     QVector<Bullet*> bulletlist;
     Grass();
-    Grass(int r,int c);
+    Grass(int r,int c,bool able);
 
     int getx(){return x;};
     int gety(){return y;};
@@ -35,6 +38,11 @@ public:
     bool getiffree(){return iffree;};
     void setiffree(bool zhi){
         iffree=zhi;
+    }
+    bool getifput(){return ifput;}
+
+    void setifput(bool zhi){
+        ifput=zhi;
     }
 
     void mousePressEvent(QMouseEvent* ev);
