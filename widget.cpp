@@ -19,6 +19,7 @@
 #include"pea.h"
 #include"getmap.h"
 #include"crator.h"
+#include"buffseed.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -34,6 +35,7 @@ Widget::Widget(QWidget *parent)
     setMouseTracking(true);
 
     selectplantnum=-1;
+    selectbuffnum=-1;
     plant=NULL;
     plantmovie=NULL;
     timer=new QTimer(this);
@@ -153,6 +155,28 @@ Widget::Widget(QWidget *parent)
         });
     }
 
+    //创建buffseed槽卡片
+    for(int i=0;i<seednum_buff;i++)
+    {
+        BuffSeed* newseed=new BuffSeed(seedname_buff[i],i+1);
+        newseed->setFixedSize(seedwidth_buff,seedheight_buff);
+        newseed->setParent(this);
+        newseed->move(seedstartx_buff+seedwidth_buff*i,seedstarty_buff);
+        //点击了卡片
+        connect(newseed,&BuffSeed::clickSeed,[=](int num){
+            qDebug()<<"you have enter the clickseend slots!";
+            QPixmap pix;
+            QString str=QString(":/resource/images/Cursor/%1.png").arg(seedname_buff[num-1]);
+            pix.load(str);
+            QSize size(50,50);
+            pix.scaled(size);
+            QCursor a(pix);
+            setCursor(QCursor(pix));
+            selectbuffnum=num;
+        });
+    }
+
+
     //测试子弹类
 //    Pea* temppea=new Pea(this,50,2,2);
 //    temppea->label->show();
@@ -234,7 +258,7 @@ Widget::Widget(QWidget *parent)
                     (*it)->setifatk(true);    //开始攻击
                     (*it)->changeatk(); //更换gif图像
                 }
-                zombielist.erase(it);
+                it=zombielist.erase(it);
             }
             else
             {
@@ -278,7 +302,7 @@ Widget::Widget(QWidget *parent)
                                     (*it)->setifatk(true);    //开始攻击
                                     (*it)->changeatk(); //更换gif图像
                                 }
-                                grass[i][j]->zombielist.erase(it);
+                                it=grass[i][j]->zombielist.erase(it);
                             }
                             //还可以在本块被阻挡
                             else if((*it)->label->x()>=grasscolpos[j]-158)
@@ -300,7 +324,7 @@ Widget::Widget(QWidget *parent)
                         {
                             if((*it)->label->x()<=grasscolpos[j-1]-118&&!(*it)->ifdie)
                             {
-                                grass[i][j]->zombielist.erase(it);
+                                it=grass[i][j]->zombielist.erase(it);
                                 //你输了，或者引入小推车
                                 //停止所有计时器
                                 this->islose=true;
@@ -327,7 +351,7 @@ Widget::Widget(QWidget *parent)
                                         it!=sunlist.end();)
                                     {
                                         Sun* p=(*it);
-                                        sunlist.erase(it);
+                                        it=sunlist.erase(it);
                                         delete p;
                                     }
                                     delete timer;
@@ -337,7 +361,7 @@ Widget::Widget(QWidget *parent)
                                         it!=zombielist.end();)
                                     {
                                         Zombie* p=(*it);
-                                        zombielist.erase(it);
+                                        it=zombielist.erase(it);
                                         delete p;
                                     }
                                     delete loselabel;
@@ -386,7 +410,7 @@ Widget::Widget(QWidget *parent)
 
                                 ifbomb=true;
                                 emit (*it2)->hit((*it)->atk);
-                                grass[i][j]->bulletlist.erase(it);
+                                it=grass[i][j]->bulletlist.erase(it);
                                 QTimer::singleShot(500,this,[=](){
                                     qDebug()<<"you have delete the pea";
                                     delete temp->label;
@@ -412,7 +436,7 @@ Widget::Widget(QWidget *parent)
 
                                     ifbomb=true;
                                     emit (*it2)->hit((*it)->atk);
-                                    grass[i][j]->bulletlist.erase(it);
+                                    it=grass[i][j]->bulletlist.erase(it);
                                     QTimer::singleShot(500,this,[=](){
                                         qDebug()<<"you have delete the pea";
                                         delete temp->label;
@@ -431,7 +455,7 @@ Widget::Widget(QWidget *parent)
                     else if(temp==1)    //进入下一个地块
                     {
                         grass[i][j+1]->bulletlist.push_back(*it);
-                        grass[i][j]->bulletlist.erase(it);
+                        it=grass[i][j]->bulletlist.erase(it);
                     }
                     else    //移出屏幕了
                     {
@@ -439,7 +463,7 @@ Widget::Widget(QWidget *parent)
                         delete temp->label;
                         delete temp->movie;
                         delete temp;
-                        grass[i][j]->bulletlist.erase(it);
+                        it=grass[i][j]->bulletlist.erase(it);
 
                     }
                 }
@@ -472,7 +496,7 @@ Widget::Widget(QWidget *parent)
             {
                 if((*it)==sun)
                 {
-                    sunlist.erase(it);
+                    it=sunlist.erase(it);
                 }
                 else
                 {
@@ -507,7 +531,7 @@ Widget::Widget(QWidget *parent)
                     it!=grass[newzombie->x][newzombie->y]->zombielist.end();it++){
                     if((*it)==newzombie)
                     {
-                        grass[newzombie->x][newzombie->y]->zombielist.erase(it);
+                        it=grass[newzombie->x][newzombie->y]->zombielist.erase(it);
                         break;
                     }
                 }
@@ -519,7 +543,7 @@ Widget::Widget(QWidget *parent)
                 {
                     if((*it)==newzombie)
                     {
-                        zombielist.erase(it);
+                        it=zombielist.erase(it);
                         break;
                     }
                 }

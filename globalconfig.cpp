@@ -50,3 +50,11 @@ bool mapbool[6][10];
 //存放目录信息
 QDir qdir;
 
+//卡片槽配置
+int seedwidth_buff=70;
+int seedheight_buff=70;
+int seedstartx_buff=1125;
+int seedstarty_buff=16;
+QString seedname_buff[8]={"violent","cold","blood","Repeater","IceShooter","","",""};;
+int seednum_buff=3;
+int sunneed_buff[8]={150,100,75,0,0,0,0,0};

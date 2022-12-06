@@ -28,4 +28,13 @@ extern bool mapbool[6][10];
 extern QDir qdir;
 
 QPair<int,int> thegrass(int x,int y);
+
+extern int seedwidth_buff;
+extern int seedheight_buff;
+extern int seedstartx_buff;
+extern int seedstarty_buff;
+
+extern QString seedname_buff[8];
+extern int seednum_buff;
+extern int sunneed_buff[8];
 #endif // GLOBALCONFIG_H

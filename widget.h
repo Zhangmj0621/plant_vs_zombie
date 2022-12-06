@@ -26,6 +26,7 @@ class Widget : public QWidget
     QMediaPlaylist* playerlist;
     Grass* grass[6][10];
     int selectplantnum;
+    int selectbuffnum;
     Plant* plant;
     QMovie* plantmovie;
     QLabel* sunLabel;
