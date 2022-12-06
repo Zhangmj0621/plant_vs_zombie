@@ -29,5 +29,5 @@ void BuffSeed::mousePressEvent(QMouseEvent *ev){
 
 void BuffSeed::paintEvent(QPaintEvent *){
     QPainter painter(this);
-    painter.drawPixmap(0,0,this->width(),this->height(),plantseedpix);
+    painter.drawPixmap(0,0,40,40,plantseedpix);
 }

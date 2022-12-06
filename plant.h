@@ -6,6 +6,7 @@
 #include<QMovie>
 #include"zombie.h"
 //#include"grass.h"
+#include"buff.h"
 
 class Plant : public QWidget
 {
@@ -24,12 +25,16 @@ public:
     QLabel* label;
     QMovie* movie;
 
+    int buffstate;    //目前所持有的buff栏状态，0为两个都没有，1为左有buff，2为右有buff，3为buff已满
+    QVector<Buff*> bufflist;
+
     Plant(QWidget* parent,int x,int y){
         this->parent=parent;
         this->x=x;
         this->y=y;
         this->now=0;
         this->bh=-1;
+        this->buffstate=0;
     }
     int getx(){return x;};
     int gety(){return y;};

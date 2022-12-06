@@ -176,6 +176,13 @@ Widget::Widget(QWidget *parent)
         });
     }
 
+    //测试buff
+//    Buff* buff=new Buff(this,3,3,1,0);
+
+//    buff->setFixedSize(70,70);
+//    buff->setParent(this);
+//    buff->move((grasscolpos[buff->x]+grasscolpos[buff->y-1])/2-30,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3-70);
+//    buff->show();
 
     //测试子弹类
 //    Pea* temppea=new Pea(this,50,2,2);
@@ -581,11 +588,11 @@ void Widget::paintEvent(QPaintEvent *)
 }
 
 void Widget::mousePressEvent(QMouseEvent *event){
-    if(
-            event->button()==Qt::RightButton)
+    if(event->button()==Qt::RightButton)
     {
         setCursor(Qt::ArrowCursor);
         selectplantnum=-1;
+        selectbuffnum=-1;
     }
     else if(!islose && event->button()==Qt::LeftButton)
     {
@@ -653,6 +660,113 @@ void Widget::mousePressEvent(QMouseEvent *event){
          {
              setCursor(Qt::ArrowCursor);
              selectplantnum=-1;
+         }
+     }
+     else if(!grass[i][j]->getiffree())
+     {
+         if(selectbuffnum!=-1)
+         {
+             QString buffname=seedname_buff[selectbuffnum-1];
+             if(sunsum<sunneed_buff[selectbuffnum-1])
+             {
+                 setCursor(Qt::ArrowCursor);
+                 selectbuffnum=-1;
+                 return;
+             }
+             sunsum-=sunneed_buff[selectbuffnum-1];
+             sunLabel->setText(QString::number(sunsum));
+             if(buffname=="violent"){
+                 int fw=0;
+                 if(grass[i][j]->plant->buffstate==0){
+                     fw=0;
+                     grass[i][j]->plant->buffstate=1;
+                 }
+                 else if(grass[i][j]->plant->buffstate==1){
+                     fw=1;
+                     grass[i][j]->plant->buffstate=3;
+                 }
+                 else if(grass[i][j]->plant->buffstate==2)
+                 {
+                     fw=0;
+                     grass[i][j]->plant->buffstate=3;
+                 }
+                 else
+                 {
+                     setCursor(Qt::ArrowCursor);
+                     selectbuffnum=-1;
+                     return;
+                 }
+                 qDebug()<<"you have show the violent buff";
+                 Buff* buff=new Buff(this,i,j,1,fw);
+                 buff->setParent(this);
+                 buff->setFixedSize(20,20);
+                 buff->move((grasscolpos[buff->y]+grasscolpos[buff->y-1])/2-buff->width()/2+fw*40,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3);
+                 buff->show();
+             }
+             else if(buffname=="cold"){
+                 int fw=0;
+                 if(grass[i][j]->plant->buffstate==0){
+                     fw=0;
+                     grass[i][j]->plant->buffstate=1;
+                 }
+                 else if(grass[i][j]->plant->buffstate==1){
+                     fw=1;
+                     grass[i][j]->plant->buffstate=3;
+                 }
+                 else if(grass[i][j]->plant->buffstate==2)
+                 {
+                     fw=0;
+                     grass[i][j]->plant->buffstate=3;
+                 }
+                 else
+                 {
+                     setCursor(Qt::ArrowCursor);
+                     selectbuffnum=-1;
+                     return;
+                 }
+                 qDebug()<<"you have show the cold buff";
+                 Buff* buff=new Buff(this,i,j,2,fw);
+                 buff->setParent(this);
+                 buff->setFixedSize(20,20);
+                 buff->move((grasscolpos[buff->y]+grasscolpos[buff->y-1])/2-buff->width()/2+fw*40,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3);
+                 buff->show();
+             }
+             else if(buffname=="blood"){
+                 int fw=0;
+                 if(grass[i][j]->plant->buffstate==0){
+                     fw=0;
+                     grass[i][j]->plant->buffstate=1;
+                 }
+                 else if(grass[i][j]->plant->buffstate==1){
+                     fw=1;
+                     grass[i][j]->plant->buffstate=3;
+                 }
+                 else if(grass[i][j]->plant->buffstate==2)
+                 {
+                     fw=0;
+                     grass[i][j]->plant->buffstate=3;
+                 }
+                 else
+                 {
+                     setCursor(Qt::ArrowCursor);
+                     selectbuffnum=-1;
+                     return;
+                 }
+                 qDebug()<<"you have show the blood buff";
+                 Buff* buff=new Buff(this,i,j,3,fw);
+                 buff->setParent(this);
+                 buff->setFixedSize(20,20);
+                 buff->move((grasscolpos[buff->y]+grasscolpos[buff->y-1])/2-buff->width()/2+fw*40,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3);
+                 buff->show();
+             }
+             else
+             {
+                 setCursor(Qt::ArrowCursor);
+                 selectplantnum=-1;
+                 return;
+             }
+             setCursor(Qt::ArrowCursor);
+             selectbuffnum=-1;
          }
      }
      else
