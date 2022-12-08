@@ -51,8 +51,8 @@ bool mapbool[6][10];
 QDir qdir;
 
 //卡片槽配置
-int seedwidth_buff=70;
-int seedheight_buff=70;
+int seedwidth_buff=50;
+int seedheight_buff=50;
 int seedstartx_buff=1125;
 int seedstarty_buff=16;
 QString seedname_buff[8]={"violent","cold","blood","Repeater","IceShooter","","",""};;

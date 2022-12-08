@@ -162,6 +162,12 @@ Widget::Widget(QWidget *parent)
         newseed->setFixedSize(seedwidth_buff,seedheight_buff);
         newseed->setParent(this);
         newseed->move(seedstartx_buff+seedwidth_buff*i,seedstarty_buff);
+        QLabel* newlabel=new QLabel(this);
+        newlabel->setStyleSheet("QLabel{background-color:rgb(200,101,102);}");
+        newlabel->setAlignment(Qt::AlignCenter);
+        newlabel->setText(QString::number(sunneed_buff[newseed->getnum()-1]));
+        newlabel->move(newseed->x()+5,newseed->y()+newseed->height());
+        newlabel->setFixedSize(seedwidth_buff-10,20);
         //点击了卡片
         connect(newseed,&BuffSeed::clickSeed,[=](int num){
             qDebug()<<"you have enter the clickseend slots!";
@@ -618,6 +624,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
              {
                  setCursor(Qt::ArrowCursor);
                  selectplantnum=-1;
+                 selectbuffnum=-1;
                  return;
              }
              sunsum-=sunneed[selectplantnum-1];
@@ -638,6 +645,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
              {
                  setCursor(Qt::ArrowCursor);
                  selectplantnum=-1;
+                 selectbuffnum=-1;
                  return;
              }
              grass[i][j]->setiffree(false);
@@ -655,11 +663,13 @@ void Widget::mousePressEvent(QMouseEvent *event){
              });
              setCursor(Qt::ArrowCursor);
              selectplantnum=-1;
+             selectbuffnum=-1;
          }
          else
          {
              setCursor(Qt::ArrowCursor);
              selectplantnum=-1;
+             selectbuffnum=-1;
          }
      }
      else if(!grass[i][j]->getiffree())
@@ -670,12 +680,23 @@ void Widget::mousePressEvent(QMouseEvent *event){
              if(sunsum<sunneed_buff[selectbuffnum-1])
              {
                  setCursor(Qt::ArrowCursor);
+                 selectplantnum=-1;
                  selectbuffnum=-1;
                  return;
              }
-             sunsum-=sunneed_buff[selectbuffnum-1];
-             sunLabel->setText(QString::number(sunsum));
              if(buffname=="violent"){
+                 //先判断是否已经拥有该种buff
+                 for(int k=0;k<grass[i][j]->plant->bufflist.size();k++)
+                 {
+                     if(grass[i][j]->plant->bufflist[k]->num==1)
+                     {
+                         setCursor(Qt::ArrowCursor);
+                         selectbuffnum=-1;
+                         selectplantnum=-1;
+                         return;
+                     }
+                 }
+                 //可以含有该buff
                  int fw=0;
                  if(grass[i][j]->plant->buffstate==0){
                      fw=0;
@@ -694,6 +715,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  {
                      setCursor(Qt::ArrowCursor);
                      selectbuffnum=-1;
+                     selectplantnum=-1;
                      return;
                  }
                  qDebug()<<"you have show the violent buff";
@@ -702,8 +724,21 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  buff->setFixedSize(20,20);
                  buff->move((grasscolpos[buff->y]+grasscolpos[buff->y-1])/2-buff->width()/2+fw*40,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3);
                  buff->show();
+                 grass[i][j]->plant->bufflist.push_back(buff);
              }
              else if(buffname=="cold"){
+                 //先判断是否已经拥有该种buff
+                 for(int k=0;k<grass[i][j]->plant->bufflist.size();k++)
+                 {
+                     if(grass[i][j]->plant->bufflist[k]->num==2)
+                     {
+                         setCursor(Qt::ArrowCursor);
+                         selectbuffnum=-1;
+                         selectplantnum=-1;
+                         return;
+                     }
+                 }
+                 //可以含有该buff
                  int fw=0;
                  if(grass[i][j]->plant->buffstate==0){
                      fw=0;
@@ -722,6 +757,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  {
                      setCursor(Qt::ArrowCursor);
                      selectbuffnum=-1;
+                     selectplantnum=-1;
                      return;
                  }
                  qDebug()<<"you have show the cold buff";
@@ -730,8 +766,21 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  buff->setFixedSize(20,20);
                  buff->move((grasscolpos[buff->y]+grasscolpos[buff->y-1])/2-buff->width()/2+fw*40,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3);
                  buff->show();
+                 grass[i][j]->plant->bufflist.push_back(buff);
              }
              else if(buffname=="blood"){
+                 //先判断是否已经拥有该种buff
+                 for(int k=0;k<grass[i][j]->plant->bufflist.size();k++)
+                 {
+                     if(grass[i][j]->plant->bufflist[k]->num==3)
+                     {
+                         setCursor(Qt::ArrowCursor);
+                         selectbuffnum=-1;
+                         selectplantnum=-1;
+                         return;
+                     }
+                 }
+                 //可以含有该buff
                  int fw=0;
                  if(grass[i][j]->plant->buffstate==0){
                      fw=0;
@@ -750,6 +799,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  {
                      setCursor(Qt::ArrowCursor);
                      selectbuffnum=-1;
+                     selectplantnum=-1;
                      return;
                  }
                  qDebug()<<"you have show the blood buff";
@@ -758,20 +808,26 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  buff->setFixedSize(20,20);
                  buff->move((grasscolpos[buff->y]+grasscolpos[buff->y-1])/2-buff->width()/2+fw*40,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3);
                  buff->show();
+                 grass[i][j]->plant->bufflist.push_back(buff);
              }
              else
              {
                  setCursor(Qt::ArrowCursor);
                  selectplantnum=-1;
+                 selectbuffnum=-1;
                  return;
              }
+             sunsum-=sunneed_buff[selectbuffnum-1];
+             sunLabel->setText(QString::number(sunsum));
              setCursor(Qt::ArrowCursor);
              selectbuffnum=-1;
+             selectplantnum=-1;
          }
      }
      else
      {
          setCursor(Qt::ArrowCursor);
          selectplantnum=-1;
+         selectbuffnum=-1;
      }
  }
