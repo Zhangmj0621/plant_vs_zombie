@@ -20,6 +20,8 @@
 #include"getmap.h"
 #include"crator.h"
 #include"buffseed.h"
+#include"snowpea.h"
+#include"firepea.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -237,8 +239,19 @@ Widget::Widget(QWidget *parent)
                         }
                         else if(grass[i][j]->plant->bh==1&&num_of_zombies[i]!=0)//豌豆射手
                         {
-                            Pea* temppea=new Pea(this,50,i,j);
-                            grass[i][j]->bulletlist.push_back(temppea);
+                            if(!grass[i][j]->plant->bufflist[1]&&!grass[i][j]->plant->bufflist[2])
+                            {
+                                Pea* temppea=new Pea(this,50,i,j);
+                                grass[i][j]->bulletlist.push_back(temppea);
+                            }
+                            else if(grass[i][j]->plant->bufflist[1]){
+                                SnowPea* temppea=new SnowPea(this,50,i,j);
+                                grass[i][j]->bulletlist.push_back(temppea);
+                            }
+                            else if(grass[i][j]->plant->bufflist[2]){
+                                FirePea* temppea=new FirePea(this,50,i,j);
+                                grass[i][j]->bulletlist.push_back(temppea);
+                            }
                         }
                         grass[i][j]->plant->now=0;
                     }
@@ -424,7 +437,7 @@ Widget::Widget(QWidget *parent)
                                 temp->changehit();
 
                                 ifbomb=true;
-                                emit (*it2)->hit((*it)->atk);
+                                emit (*it2)->hit((*it)->atk,(*it)->ifcold,(*it)->ifblood);
                                 it=grass[i][j]->bulletlist.erase(it);
                                 QTimer::singleShot(500,this,[=](){
                                     qDebug()<<"you have delete the pea";
@@ -450,7 +463,7 @@ Widget::Widget(QWidget *parent)
                                     temp->changehit();
 
                                     ifbomb=true;
-                                    emit (*it2)->hit((*it)->atk);
+                                    emit (*it2)->hit((*it)->atk,(*it)->ifcold,(*it)->ifblood);
                                     it=grass[i][j]->bulletlist.erase(it);
                                     QTimer::singleShot(500,this,[=](){
                                         qDebug()<<"you have delete the pea";
@@ -534,8 +547,8 @@ Widget::Widget(QWidget *parent)
         qDebug()<<"you have the new zombie at line "<<_x;
         newzombie->updateinfo();
         zombielist.push_back(newzombie);
-        connect(newzombie,&Zombie::hit,[=](int atk){
-            newzombie->behit(atk);
+        connect(newzombie,&Zombie::hit,[=](int atk,bool ifcold,bool ifblood){
+            newzombie->behit(atk,ifcold,ifblood);
         });
         connect(newzombie,&Zombie::die,[=](){
             newzombie->changedie();
@@ -686,6 +699,8 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  selectbuffnum=-1;
                  return;
              }
+             //注意狂暴可以和流血冰冻叠加
+             //冰冻叠加只能同时存在一个
              if(buffname=="violent"){
                  //先判断是否已经拥有该种buff
                  if(grass[i][j]->plant->bufflist[0])
@@ -723,6 +738,8 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  buff->setFixedSize(20,20);
                  buff->move((grasscolpos[buff->y]+grasscolpos[buff->y-1])/2-buff->width()/2+fw*40,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3);
                  buff->show();
+                 //狂暴状态下攻击间隔变为原来一半
+                 grass[i][j]->plant->actcount/=2;
                  connect(buff,&Buff::die,[=](int num){
                      grass[i][j]->plant->bufflist[num-1]=false;
                      if(buff->fw==0){
@@ -737,6 +754,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                      delete buff;
                      sunsum+=sunneed_buff[num-1]-25;
                      sunLabel->setText(QString::number(sunsum));
+                     grass[i][j]->plant->actcount*=2;
                  });
                  grass[i][j]->plant->bufflist[0]=true;
              }
@@ -750,7 +768,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                      return;
                  }
                  //先判断是否已经拥有该种buff
-                 if(grass[i][j]->plant->bufflist[1])
+                 if(grass[i][j]->plant->bufflist[1] || grass[i][j]->plant->bufflist[2])
                  {
                      setCursor(Qt::ArrowCursor);
                      selectbuffnum=-1;
@@ -812,7 +830,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                      return;
                  }
                  //先判断是否已经拥有该种buff
-                 if(grass[i][j]->plant->bufflist[2])
+                 if(grass[i][j]->plant->bufflist[2] || grass[i][j]->plant->bufflist[1])
                  {
                      setCursor(Qt::ArrowCursor);
                      selectbuffnum=-1;

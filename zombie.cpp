@@ -84,7 +84,7 @@ void Zombie::changedelete()
     movie=movie1;
 }
 
-void Zombie::behit(int atk){
+void Zombie::behit(int atk,bool ifcold,bool ifblood){
     qDebug()<<"the zombie have be hit";
     if(hp>atk) hp-=atk;
     else if(hp!=0)

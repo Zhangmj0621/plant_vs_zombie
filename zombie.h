@@ -44,7 +44,7 @@ public:
     void setifatk(bool newif){ifatk=newif;};
 
 
-    virtual void behit(int atk);
+    virtual void behit(int atk,bool ifcold,bool ifblood);
 
     void changeatk();
     void changewalk();
@@ -55,7 +55,7 @@ public:
     virtual void updateinfo();
 
 signals:
-    void hit(int atk);
+    void hit(int atk,bool ifcold,bool ifblood);
     void die();
 };
 

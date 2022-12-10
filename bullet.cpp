@@ -11,6 +11,8 @@ Bullet::Bullet(QWidget* parent,int atk,int x,int y){
     this->atk=atk;
     this->x=x;
     this->y=y;
+    this->ifcold=false;
+    this->ifblood=false;
 }
 
 void Bullet::changehit(){

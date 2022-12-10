@@ -22,6 +22,9 @@ public:
     QMovie* movie;
     int atk;
 
+    bool ifcold;    //是否可以减速敌人
+    bool ifblood;   //是否可以使敌人流血
+
     explicit Bullet(QObject *parent = nullptr);
 
     Bullet(QWidget* parent,int atk,int x,int y);

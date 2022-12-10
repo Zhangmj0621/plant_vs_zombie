@@ -21,6 +21,7 @@ SOURCES += \
     buffseed.cpp \
     bullet.cpp \
     crator.cpp \
+    firepea.cpp \
     getmap.cpp \
     globalconfig.cpp \
     grass.cpp \
@@ -29,6 +30,7 @@ SOURCES += \
     peashooter.cpp \
     plant.cpp \
     plantseed.cpp \
+    snowpea.cpp \
     sun.cpp \
     sunflower.cpp \
     wallnut.cpp \
@@ -40,6 +42,7 @@ HEADERS += \
     buffseed.h \
     bullet.h \
     crator.h \
+    firepea.h \
     getmap.h \
     globalconfig.h \
     grass.h \
@@ -47,6 +50,7 @@ HEADERS += \
     peashooter.h \
     plant.h \
     plantseed.h \
+    snowpea.h \
     sun.h \
     sunflower.h \
     wallnut.h \
