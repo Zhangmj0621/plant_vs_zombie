@@ -272,7 +272,11 @@ Widget::Widget(QWidget *parent)
         //未进入草地僵尸活动
         for(QVector<Zombie*>::iterator it=zombielist.begin();it!=zombielist.end();)
         {
-            (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
+            (*it)->movenow++;
+            if((*it)->movenow>=(*it)->moveacount){
+                (*it)->movenow=0;
+                (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
+            }
             if((*it)->label->x()==grasscolpos[9]){
                 num_of_zombies[(*it)->getx()]++;
             }
@@ -317,7 +321,11 @@ Widget::Widget(QWidget *parent)
                     //在行走中
                     else
                     {
-                        (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
+                        (*it)->movenow++;
+                        if((*it)->movenow>=(*it)->moveacount){
+                            (*it)->movenow=0;
+                            (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
+                        }
                         //进入新地块
                         if(j>=2)
                         {

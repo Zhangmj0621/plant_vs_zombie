@@ -27,8 +27,13 @@ public:
     QLabel* label;
     QMovie* movie;
     int actacount;
+    int movenow;
+    int moveacount;
     int now;
     bool ifdie;
+
+    bool ifcold;    //是否处于减速状态
+    bool ifblood;   //是否处于流血状态
 
     Zombie(QWidget* parent,int x);
 

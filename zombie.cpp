@@ -20,6 +20,10 @@ Zombie::Zombie(QWidget* parent,int x)
     this->zombieattackloseheadmovie=":/resource/images/Zombies/Zombie/ZombieLostHeadAttack.gif";
     this->diemovie=":/resource/images/Zombies/Zombie/ZombieDie.gif";
     this->ifatk=false;
+    this->ifcold=false;
+    this->ifblood=false;
+    this->moveacount=1;
+    this->movenow=0;
 }
 
 void Zombie::attack(){
@@ -86,10 +90,17 @@ void Zombie::changedelete()
 
 void Zombie::behit(int atk,bool ifcold,bool ifblood){
     qDebug()<<"the zombie have be hit";
-    if(hp>atk) hp-=atk;
+    if(hp>atk)
+    {
+        hp-=atk;
+        this->ifcold=ifcold;
+        this->ifblood=ifblood;
+        if(ifcold) this->moveacount=2;
+    }
     else if(hp!=0)
     {
         hp=0;
+        this->ifcold=ifcold;
         changedie();
         ifdie=true;
         QTimer::singleShot(2000,this,[=](){
