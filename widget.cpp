@@ -44,6 +44,8 @@ Widget::Widget(QWidget *parent)
     timersun->start(10000);
     timerzombie=new QTimer(this);
     timerzombie->start(5000);
+
+
     //僵尸每行数量初值设为0
     for(int i=1;i<=5;i++)
         num_of_zombies[i]=0;
@@ -686,15 +688,12 @@ void Widget::mousePressEvent(QMouseEvent *event){
              }
              if(buffname=="violent"){
                  //先判断是否已经拥有该种buff
-                 for(int k=0;k<grass[i][j]->plant->bufflist.size();k++)
+                 if(grass[i][j]->plant->bufflist[0])
                  {
-                     if(grass[i][j]->plant->bufflist[k]->num==1)
-                     {
-                         setCursor(Qt::ArrowCursor);
-                         selectbuffnum=-1;
-                         selectplantnum=-1;
-                         return;
-                     }
+                     setCursor(Qt::ArrowCursor);
+                     selectbuffnum=-1;
+                     selectplantnum=-1;
+                     return;
                  }
                  //可以含有该buff
                  int fw=0;
@@ -724,19 +723,39 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  buff->setFixedSize(20,20);
                  buff->move((grasscolpos[buff->y]+grasscolpos[buff->y-1])/2-buff->width()/2+fw*40,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3);
                  buff->show();
-                 grass[i][j]->plant->bufflist.push_back(buff);
+                 connect(buff,&Buff::die,[=](int num){
+                     grass[i][j]->plant->bufflist[num-1]=false;
+                     if(buff->fw==0){
+                         if(grass[i][j]->plant->buffstate==1) grass[i][j]->plant->buffstate=0;
+                         else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=2;
+                     }
+                     else
+                     {
+                         if(grass[i][j]->plant->buffstate==2) grass[i][j]->plant->buffstate=0;
+                         else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=1;
+                     }
+                     delete buff;
+                     sunsum+=sunneed_buff[num-1]-25;
+                     sunLabel->setText(QString::number(sunsum));
+                 });
+                 grass[i][j]->plant->bufflist[0]=true;
              }
              else if(buffname=="cold"){
-                 //先判断是否已经拥有该种buff
-                 for(int k=0;k<grass[i][j]->plant->bufflist.size();k++)
+                 //注意仅当为可攻击角色才可以拥有冰冻，目前只有1即为豌豆射手
+                 if(grass[i][j]->plant->bh!=1)
                  {
-                     if(grass[i][j]->plant->bufflist[k]->num==2)
-                     {
-                         setCursor(Qt::ArrowCursor);
-                         selectbuffnum=-1;
-                         selectplantnum=-1;
-                         return;
-                     }
+                     setCursor(Qt::ArrowCursor);
+                     selectbuffnum=-1;
+                     selectplantnum=-1;
+                     return;
+                 }
+                 //先判断是否已经拥有该种buff
+                 if(grass[i][j]->plant->bufflist[1])
+                 {
+                     setCursor(Qt::ArrowCursor);
+                     selectbuffnum=-1;
+                     selectplantnum=-1;
+                     return;
                  }
                  //可以含有该buff
                  int fw=0;
@@ -766,19 +785,39 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  buff->setFixedSize(20,20);
                  buff->move((grasscolpos[buff->y]+grasscolpos[buff->y-1])/2-buff->width()/2+fw*40,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3);
                  buff->show();
-                 grass[i][j]->plant->bufflist.push_back(buff);
+                 connect(buff,&Buff::die,[=](int num){
+                     grass[i][j]->plant->bufflist[num-1]=false;
+                     if(buff->fw==0){
+                         if(grass[i][j]->plant->buffstate==1) grass[i][j]->plant->buffstate=0;
+                         else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=2;
+                     }
+                     else
+                     {
+                         if(grass[i][j]->plant->buffstate==2) grass[i][j]->plant->buffstate=0;
+                         else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=1;
+                     }
+                     delete buff;
+                     sunsum+=sunneed_buff[num-1]-25;
+                     sunLabel->setText(QString::number(sunsum));
+                 });
+                 grass[i][j]->plant->bufflist[1]=true;
              }
              else if(buffname=="blood"){
-                 //先判断是否已经拥有该种buff
-                 for(int k=0;k<grass[i][j]->plant->bufflist.size();k++)
+                 //注意仅当为可攻击角色才可以拥有冰冻，目前只有1即为豌豆射手
+                 if(grass[i][j]->plant->bh!=1)
                  {
-                     if(grass[i][j]->plant->bufflist[k]->num==3)
-                     {
-                         setCursor(Qt::ArrowCursor);
-                         selectbuffnum=-1;
-                         selectplantnum=-1;
-                         return;
-                     }
+                     setCursor(Qt::ArrowCursor);
+                     selectbuffnum=-1;
+                     selectplantnum=-1;
+                     return;
+                 }
+                 //先判断是否已经拥有该种buff
+                 if(grass[i][j]->plant->bufflist[2])
+                 {
+                     setCursor(Qt::ArrowCursor);
+                     selectbuffnum=-1;
+                     selectplantnum=-1;
+                     return;
                  }
                  //可以含有该buff
                  int fw=0;
@@ -808,7 +847,22 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  buff->setFixedSize(20,20);
                  buff->move((grasscolpos[buff->y]+grasscolpos[buff->y-1])/2-buff->width()/2+fw*40,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3);
                  buff->show();
-                 grass[i][j]->plant->bufflist.push_back(buff);
+                 connect(buff,&Buff::die,[=](int num){
+                     grass[i][j]->plant->bufflist[num-1]=false;
+                     if(buff->fw==0){
+                         if(grass[i][j]->plant->buffstate==1) grass[i][j]->plant->buffstate=0;
+                         else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=2;
+                     }
+                     else
+                     {
+                         if(grass[i][j]->plant->buffstate==2) grass[i][j]->plant->buffstate=0;
+                         else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=1;
+                     }
+                     delete buff;
+                     sunsum+=sunneed_buff[num-1]-25;
+                     sunLabel->setText(QString::number(sunsum));
+                 });
+                 grass[i][j]->plant->bufflist[2]=true;
              }
              else
              {

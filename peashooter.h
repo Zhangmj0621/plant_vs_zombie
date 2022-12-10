@@ -12,6 +12,7 @@ class Peashooter :public Plant
 public:
     Peashooter(QWidget* parent,int x,int y):Plant(parent,x,y){
         this->plantmovie=":/resource/images/Plants/Peashooter/Peashooter.gif";
+        this->violentpix=":/";
         this->hp=150;
         this->bh=1;
         this->label=new QLabel(this->parent);

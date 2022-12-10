@@ -26,7 +26,13 @@ public:
     QMovie* movie;
 
     int buffstate;    //目前所持有的buff栏状态，0为两个都没有，1为左有buff，2为右有buff，3为buff已满
-    QVector<Buff*> bufflist;
+    bool bufflist[5];
+
+    //设置加倍和冰冻两种不同buff下的图片路径
+    //设计有加倍状态的时候优先显示加倍
+    QString violentpix;
+    QString coldpix;
+
 
     Plant(QWidget* parent,int x,int y){
         this->parent=parent;
@@ -35,6 +41,7 @@ public:
         this->now=0;
         this->bh=-1;
         this->buffstate=0;
+        for(int i=0;i<5;i++) bufflist[i]=false;
     }
     int getx(){return x;};
     int gety(){return y;};

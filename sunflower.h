@@ -9,6 +9,7 @@ class SunFlower : public Plant
 {
     Q_OBJECT
     QString lightmovie;
+    QString violentlightmovie;
 public:
     SunFlower(QWidget* parent,int x,int y):Plant(parent,x,y)
     {
@@ -16,6 +17,8 @@ public:
         this->hp=100;
         this->bh=0;
         this->plantmovie=":/resource/images/Plants/SunFlower/SunFlower1.gif";
+        this->violentpix=":/resource/images/Plants/TwinSunflower/TwinSunflower1.gif";
+        this->violentlightmovie=":/resource/images/Plants/TwinSunflower/TwinSunflower2.gif";
         this->label=new QLabel(this->parent);
         this->movie=new QMovie(plantmovie);
         movie->start();

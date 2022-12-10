@@ -26,6 +26,7 @@ public:
 
 signals:
 
+    void die(int num);
 };
 
 #endif // BUFF_H

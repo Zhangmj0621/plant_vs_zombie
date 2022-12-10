@@ -14,10 +14,11 @@ Buff::Buff(QWidget* parent,int x,int y,int num,int fw):parent(parent){
 
 void Buff::mousePressEvent(QMouseEvent *ev){
       //emit this->clickSeed();
-    if(ev->button()==Qt::LeftButton)
+    if(ev->button()==Qt::RightButton)
     {
-        QString str=QString("you have press the seed %1").arg(seedname_buff[num-1]);
-        qDebug()<<str;
+//        QString str=QString("you have press the seed %1").arg(seedname_buff[num-1]);
+//        qDebug()<<str;
+        emit this->die(num);
     }
 }
 
