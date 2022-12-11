@@ -9,10 +9,13 @@
 class Peashooter :public Plant
 {
     Q_OBJECT
+    QString superpix;
 public:
     Peashooter(QWidget* parent,int x,int y):Plant(parent,x,y){
         this->plantmovie=":/resource/images/Plants/Peashooter/Peashooter.gif";
-        this->violentpix=":/";
+        this->violentpix=":/resource/images/Plants/Repeater/Repeater.gif";
+        this->coldpix=":/resource/images/Plants/SnowPea/SnowPea.gif";
+        this->superpix=":/resource/images/Plants/GatlingPea/GatlingPea.gif";
         this->hp=150;
         this->bh=1;
         this->label=new QLabel(this->parent);
@@ -28,6 +31,12 @@ public:
     void act() override;
     void mousePressEvent(QMouseEvent*) override;
     void paintEvent(QPaintEvent *) override;
+
+    void changenormel() override;
+    void changeviolent() override;
+
+    void changecold() override;
+    void changesuper() override;
 
 signals:
 

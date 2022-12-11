@@ -34,6 +34,8 @@ public:
     void paintEvent(QPaintEvent *) override;
     void changelight() override;
     void changegeneral() override;
+    void changenormel() override;
+    void changeviolent() override;
 
 signals:
 

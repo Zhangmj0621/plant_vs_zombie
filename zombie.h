@@ -54,6 +54,7 @@ public:
     void setx(int x){this->x=x;};
     void sety(int y){this->y=y;};
     int getatk(){return atk;};
+    void setatk(int newatk){atk=newatk;}
     int getactacount(){return actacount;};
     int getnow(){return now;};
     int gethp(){return hp;}

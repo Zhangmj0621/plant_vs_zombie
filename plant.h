@@ -57,6 +57,11 @@ public:
     virtual void act(){};   //植物活动，向日葵为释放太阳，豌豆射手为攻击
     virtual void changelight(){};
     virtual void changegeneral(){};
+
+    virtual void changeviolent(){};
+    virtual void changenormel(){};
+    virtual void changecold(){};
+    virtual void changesuper(){};
 signals:
     void die();
 };

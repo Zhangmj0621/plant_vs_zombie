@@ -335,6 +335,7 @@ Widget::Widget(QWidget *parent)
                     if((*it)->ifheatk())
                     {
                         (*it)->now+=30;
+                        (*it)->bloodlabel->resize(76*((*it)->gethp())/((*it)->getfullhp()),16);
                         if((*it)->actacount<=(*it)->now&&!(*it)->ifdie)
                         {
                             grass[i][j]->plant->hit((*it));
@@ -776,6 +777,10 @@ void Widget::mousePressEvent(QMouseEvent *event){
                      selectplantnum=-1;
                      return;
                  }
+                 //说明有两个buff切换为超级
+                 if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->changesuper();
+                 //说明只有一个buff切换为狂暴
+                 else grass[i][j]->plant->changeviolent();
                  qDebug()<<"you have show the violent buff";
                  Buff* buff=new Buff(this,i,j,1,fw);
                  buff->setParent(this);
@@ -784,23 +789,51 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  buff->show();
                  grass[i][j]->plant->buffpoint[0]=buff;
                  //狂暴状态下攻击间隔变为原来一半
+                 //如果为坚果则将生命值加400
                  grass[i][j]->plant->actcount/=2;
+                 if(grass[i][j]->plant->bh==2) grass[i][j]->plant->hp+=400;
                  connect(buff,&Buff::die,[=](int num){
                      grass[i][j]->plant->bufflist[num-1]=false;
                      grass[i][j]->plant->buffpoint[num-1]=NULL;
                      if(buff->fw==0){
-                         if(grass[i][j]->plant->buffstate==1) grass[i][j]->plant->buffstate=0;
-                         else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=2;
+                         if(grass[i][j]->plant->buffstate==1)
+                         {
+                             grass[i][j]->plant->buffstate=0;
+                             grass[i][j]->plant->changenormel();
+                         }
+                         else if(grass[i][j]->plant->buffstate==3)
+                         {
+                             grass[i][j]->plant->buffstate=2;
+                             if(grass[i][j]->plant->bufflist[1]) grass[i][j]->plant->changecold();
+                             else grass[i][j]->plant->changenormel();
+                         }
                      }
                      else
                      {
-                         if(grass[i][j]->plant->buffstate==2) grass[i][j]->plant->buffstate=0;
-                         else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=1;
+                         if(grass[i][j]->plant->buffstate==2)
+                         {
+                             grass[i][j]->plant->buffstate=0;
+                             grass[i][j]->plant->changenormel();
+                         }
+                         else if(grass[i][j]->plant->buffstate==3)
+                         {
+                             grass[i][j]->plant->buffstate=1;
+                             if(grass[i][j]->plant->bufflist[1]) grass[i][j]->plant->changecold();
+                             else grass[i][j]->plant->changenormel();
+                         }
                      }
                      delete buff;
                      sunsum+=sunneed_buff[num-1]-25;
                      sunLabel->setText(QString::number(sunsum));
                      grass[i][j]->plant->actcount*=2;
+                     //如果为坚果，则相当于呗一个攻击力为400的僵尸咬了一口
+                     if(grass[i][j]->plant->bh==2){
+                         Zombie* temp=new Zombie(this,1);
+                         temp->setatk(400);
+                         grass[i][j]->plant->hit(temp);
+                         delete temp;
+                         this->update();
+                     }
                  });
                  grass[i][j]->plant->bufflist[0]=true;
              }
@@ -843,6 +876,10 @@ void Widget::mousePressEvent(QMouseEvent *event){
                      selectplantnum=-1;
                      return;
                  }
+                 //说明有两个buff切换为超级
+                 if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->changesuper();
+                 //说明只有一个buff切换为冰冻
+                 else grass[i][j]->plant->changecold();
                  qDebug()<<"you have show the cold buff";
                  Buff* buff=new Buff(this,i,j,2,fw);
                  buff->setParent(this);
@@ -854,13 +891,29 @@ void Widget::mousePressEvent(QMouseEvent *event){
                      grass[i][j]->plant->bufflist[num-1]=false;
                      grass[i][j]->plant->buffpoint[num-1]=NULL;
                      if(buff->fw==0){
-                         if(grass[i][j]->plant->buffstate==1) grass[i][j]->plant->buffstate=0;
-                         else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=2;
+                         if(grass[i][j]->plant->buffstate==1)
+                         {
+                             grass[i][j]->plant->buffstate=0;
+                             grass[i][j]->plant->changenormel();
+                         }
+                         else if(grass[i][j]->plant->buffstate==3)
+                         {
+                             grass[i][j]->plant->buffstate=2;
+                             grass[i][j]->plant->changeviolent();
+                         }
                      }
                      else
                      {
-                         if(grass[i][j]->plant->buffstate==2) grass[i][j]->plant->buffstate=0;
-                         else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=1;
+                         if(grass[i][j]->plant->buffstate==2)
+                         {
+                             grass[i][j]->plant->buffstate=0;
+                             grass[i][j]->plant->changenormel();
+                         }
+                         else if(grass[i][j]->plant->buffstate==3)
+                         {
+                             grass[i][j]->plant->buffstate=1;
+                             grass[i][j]->plant->changeviolent();
+                         }
                      }
                      delete buff;
                      sunsum+=sunneed_buff[num-1]-25;
@@ -907,6 +960,8 @@ void Widget::mousePressEvent(QMouseEvent *event){
                      selectplantnum=-1;
                      return;
                  }
+                 //说明有两个buff切换为超级
+                 if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->changesuper();
                  qDebug()<<"you have show the blood buff";
                  Buff* buff=new Buff(this,i,j,3,fw);
                  buff->setParent(this);
@@ -918,13 +973,29 @@ void Widget::mousePressEvent(QMouseEvent *event){
                      grass[i][j]->plant->bufflist[num-1]=false;
                      grass[i][j]->plant->buffpoint[num-1]=NULL;
                      if(buff->fw==0){
-                         if(grass[i][j]->plant->buffstate==1) grass[i][j]->plant->buffstate=0;
-                         else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=2;
+                         if(grass[i][j]->plant->buffstate==1)
+                         {
+                             grass[i][j]->plant->buffstate=0;
+                             grass[i][j]->plant->changenormel();
+                         }
+                         else if(grass[i][j]->plant->buffstate==3)
+                         {
+                             grass[i][j]->plant->buffstate=2;
+                             grass[i][j]->plant->changeviolent();
+                         }
                      }
                      else
                      {
-                         if(grass[i][j]->plant->buffstate==2) grass[i][j]->plant->buffstate=0;
-                         else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=1;
+                         if(grass[i][j]->plant->buffstate==2)
+                         {
+                             grass[i][j]->plant->buffstate=0;
+                             grass[i][j]->plant->changenormel();
+                         }
+                         else if(grass[i][j]->plant->buffstate==3)
+                         {
+                             grass[i][j]->plant->buffstate=1;
+                             grass[i][j]->plant->changeviolent();
+                         }
                      }
                      delete buff;
                      sunsum+=sunneed_buff[num-1]-25;
