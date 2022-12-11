@@ -67,5 +67,7 @@
         <file>resource/images/Cursor/blood.png</file>
         <file>resource/images/Cursor/cold.png</file>
         <file>resource/images/Cursor/violent.png</file>
+        <file>resource/images/Seed/blood2.png</file>
+        <file>resource/images/Seed/cold2.png</file>
     </qresource>
 </RCC>

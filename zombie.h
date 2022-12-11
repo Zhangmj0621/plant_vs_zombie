@@ -14,6 +14,8 @@ protected:
 
     int hp,atk;
 
+    int fullhp; //记录满血
+
     QString zombiemovie;
     QString attackmovie;
     QString diemovie;
@@ -25,11 +27,21 @@ protected:
 public:
     int x,y;
     QLabel* label;
+    QLabel* backbloodlabel;
+    QLabel* bloodlabel;
+    //冰冻buff和流血buff
+    QLabel* coldbufflabel;
+    QLabel* bloodbufflabel;
     QMovie* movie;
+    //执行吃操作和移动操作所用的帧数
     int actacount;
     int movenow;
     int moveacount;
     int now;
+    //流血所用的帧数和经历的帧数
+    //设定为一秒钟留5滴血，相当于30帧里7个循环执行扣1滴血，即bloodacount=7，进入流血状态状态永恒
+    int bloodnow;
+    int bloodacount;
     bool ifdie;
 
     bool ifcold;    //是否处于减速状态
@@ -44,6 +56,8 @@ public:
     int getatk(){return atk;};
     int getactacount(){return actacount;};
     int getnow(){return now;};
+    int gethp(){return hp;}
+    int getfullhp(){return fullhp;}
     void setnow(int _now){now=_now;};
     bool ifheatk(){return ifatk;};
     void setifatk(bool newif){ifatk=newif;};

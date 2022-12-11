@@ -28,6 +28,13 @@ void WallNut::hit(Zombie* zombie){
         emit this->die();   //告诉草坪去更新状态
         delete label;
         delete movie;   //删除额外申请空间
+        for(int i=0;i<5;i++)
+        {
+            if(buffpoint[i]!=NULL)
+            {
+                delete buffpoint[i];
+            }
+        }
     }
     else if(hp+zombie->getatk()>200&&hp<=200)   //切换受伤1
     {

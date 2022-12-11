@@ -276,6 +276,21 @@ Widget::Widget(QWidget *parent)
             if((*it)->movenow>=(*it)->moveacount){
                 (*it)->movenow=0;
                 (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
+                (*it)->backbloodlabel->move((*it)->label->x()+40,(*it)->label->y());
+                (*it)->bloodlabel->move((*it)->label->x()+42,(*it)->label->y()+2);
+                (*it)->bloodlabel->resize(76*((*it)->gethp())/((*it)->getfullhp()),16);
+                (*it)->coldbufflabel->move((*it)->backbloodlabel->x()+(*it)->backbloodlabel->width()+5,(*it)->backbloodlabel->y());
+                (*it)->bloodbufflabel->move((*it)->backbloodlabel->x()-25,(*it)->backbloodlabel->y());
+            }
+            if((*it)->ifblood)
+            {
+                (*it)->bloodnow++;
+                if((*it)->bloodnow>=(*it)->bloodacount)
+                {
+                    (*it)->behit(1,false,false);
+                    (*it)->bloodnow=0;
+                    (*it)->bloodlabel->resize(76*((*it)->gethp())/((*it)->getfullhp()),16);
+                }
             }
             if((*it)->label->x()==grasscolpos[9]){
                 num_of_zombies[(*it)->getx()]++;
@@ -305,6 +320,17 @@ Widget::Widget(QWidget *parent)
                 for(QVector<Zombie*>::iterator it=grass[i][j]->zombielist.begin();
                     it!=grass[i][j]->zombielist.end();)
                 {
+                    //是否流血
+                    if((*it)->ifblood)
+                    {
+                        (*it)->bloodnow++;
+                        if((*it)->bloodnow>=(*it)->bloodacount)
+                        {
+                            (*it)->behit(1,false,false);
+                            (*it)->bloodnow=0;
+                            (*it)->bloodlabel->resize(76*((*it)->gethp())/((*it)->getfullhp()),16);
+                        }
+                    }
                     //是否在攻击状态
                     if((*it)->ifheatk())
                     {
@@ -325,7 +351,13 @@ Widget::Widget(QWidget *parent)
                         if((*it)->movenow>=(*it)->moveacount){
                             (*it)->movenow=0;
                             (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
+                            (*it)->backbloodlabel->move((*it)->label->x()+40,(*it)->label->y());
+                            (*it)->bloodlabel->move((*it)->label->x()+42,(*it)->label->y()+2);
+                            (*it)->bloodlabel->resize(76*((*it)->gethp())/((*it)->getfullhp()),16);
+                            (*it)->coldbufflabel->move((*it)->backbloodlabel->x()+(*it)->backbloodlabel->width()+5,(*it)->backbloodlabel->y());
+                            (*it)->bloodbufflabel->move((*it)->backbloodlabel->x()-25,(*it)->backbloodlabel->y());
                         }
+
                         //进入新地块
                         if(j>=2)
                         {
@@ -588,6 +620,10 @@ Widget::Widget(QWidget *parent)
             QTimer::singleShot(500,this,[=](){
                 delete newzombie->label;
                 delete newzombie->movie;
+                delete newzombie->backbloodlabel;
+                delete newzombie->bloodlabel;
+                delete newzombie->coldbufflabel;
+                delete newzombie->bloodbufflabel;
                 delete newzombie;
             });
         });
@@ -746,10 +782,12 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  buff->setFixedSize(20,20);
                  buff->move((grasscolpos[buff->y]+grasscolpos[buff->y-1])/2-buff->width()/2+fw*40,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3);
                  buff->show();
+                 grass[i][j]->plant->buffpoint[0]=buff;
                  //狂暴状态下攻击间隔变为原来一半
                  grass[i][j]->plant->actcount/=2;
                  connect(buff,&Buff::die,[=](int num){
                      grass[i][j]->plant->bufflist[num-1]=false;
+                     grass[i][j]->plant->buffpoint[num-1]=NULL;
                      if(buff->fw==0){
                          if(grass[i][j]->plant->buffstate==1) grass[i][j]->plant->buffstate=0;
                          else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=2;
@@ -811,8 +849,10 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  buff->setFixedSize(20,20);
                  buff->move((grasscolpos[buff->y]+grasscolpos[buff->y-1])/2-buff->width()/2+fw*40,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3);
                  buff->show();
+                 grass[i][j]->plant->buffpoint[1]=buff;
                  connect(buff,&Buff::die,[=](int num){
                      grass[i][j]->plant->bufflist[num-1]=false;
+                     grass[i][j]->plant->buffpoint[num-1]=NULL;
                      if(buff->fw==0){
                          if(grass[i][j]->plant->buffstate==1) grass[i][j]->plant->buffstate=0;
                          else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=2;
@@ -873,8 +913,10 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  buff->setFixedSize(20,20);
                  buff->move((grasscolpos[buff->y]+grasscolpos[buff->y-1])/2-buff->width()/2+fw*40,grassrowpos[buff->x-1]/3+grassrowpos[buff->x]*2/3);
                  buff->show();
+                 grass[i][j]->plant->buffpoint[2]=buff;
                  connect(buff,&Buff::die,[=](int num){
                      grass[i][j]->plant->bufflist[num-1]=false;
+                     grass[i][j]->plant->buffpoint[num-1]=NULL;
                      if(buff->fw==0){
                          if(grass[i][j]->plant->buffstate==1) grass[i][j]->plant->buffstate=0;
                          else if(grass[i][j]->plant->buffstate==3) grass[i][j]->plant->buffstate=2;

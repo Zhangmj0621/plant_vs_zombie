@@ -10,6 +10,7 @@ Zombie::Zombie(QWidget* parent,int x)
     this->y=10;
     this->now=0;
     this->hp=250;
+    this->fullhp=250;
     this->atk=50;
     this->now=0;
     this->ifdie=false;
@@ -24,6 +25,8 @@ Zombie::Zombie(QWidget* parent,int x)
     this->ifblood=false;
     this->moveacount=1;
     this->movenow=0;
+    this->bloodacount=7;
+    this->bloodnow=0;
 }
 
 void Zombie::attack(){
@@ -40,6 +43,31 @@ void Zombie::updateinfo(){
     label->setMovie(movie);
     label->move(parent->width()+label->width(),grassrowpos[x-1]/3+grassrowpos[x]*2/3-140);
     label->show();
+
+    backbloodlabel=new QLabel(parent);
+    backbloodlabel->setFixedSize(80,20);
+    bloodlabel=new QLabel(parent);
+    bloodlabel->resize(76,16);
+    backbloodlabel->move(parent->width()+label->width()+40,grassrowpos[x-1]/3+grassrowpos[x]*2/3-140);
+    bloodlabel->move(parent->width()+label->width()+42,grassrowpos[x-1]/3+grassrowpos[x]*2/3-140+2);
+
+    backbloodlabel->setStyleSheet("QLabel{background-color:rgb(255,255,255);}");
+    bloodlabel->setStyleSheet("QLabel{background-color:rgb(255,0,0);}");
+
+    backbloodlabel->show();
+    bloodlabel->show();
+
+    coldbufflabel=new QLabel(parent);
+    coldbufflabel->setPixmap(QPixmap(":/resource/images/Seed/cold2.png"));
+    coldbufflabel->setFixedSize(20,20);
+    coldbufflabel->move(backbloodlabel->x()+backbloodlabel->width()+5,backbloodlabel->y());
+    coldbufflabel->hide();
+
+    bloodbufflabel=new QLabel(parent);
+    bloodbufflabel->setPixmap(QPixmap(":/resource/images/Seed/blood2.png"));
+    bloodbufflabel->setFixedSize(20,20);
+    bloodbufflabel->move(backbloodlabel->x()-25,backbloodlabel->y());
+    bloodbufflabel->hide();
 }
 
 void Zombie::changeatk()
@@ -93,14 +121,18 @@ void Zombie::behit(int atk,bool ifcold,bool ifblood){
     if(hp>atk)
     {
         hp-=atk;
-        this->ifcold=ifcold;
-        this->ifblood=ifblood;
+        if(!this->ifcold&&ifcold) this->coldbufflabel->show();
+        if(!this->ifblood&&ifblood) this->bloodbufflabel->show();
+        if(!this->ifcold) this->ifcold=ifcold;
+        if(!this->ifblood) this->ifblood=ifblood;
         if(ifcold) this->moveacount=2;
     }
     else if(hp!=0)
     {
         hp=0;
-        this->ifcold=ifcold;
+        if(!this->ifcold&&ifcold) this->coldbufflabel->show();
+        if(!this->ifcold) this->ifcold=ifcold;
+        if(ifcold) this->moveacount=2;
         changedie();
         ifdie=true;
         QTimer::singleShot(2000,this,[=](){
