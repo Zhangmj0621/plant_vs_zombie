@@ -22,6 +22,8 @@
 #include"buffseed.h"
 #include"snowpea.h"
 #include"firepea.h"
+#include"newspaperzombie.h"
+#include"shovel.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -30,7 +32,7 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
 
     //初始化信息
-    sunsum=5000;
+    //sunsum=5000;
     setFixedSize(1500,900);
     setWindowTitle("PVZ");
 
@@ -38,6 +40,7 @@ Widget::Widget(QWidget *parent)
 
     selectplantnum=-1;
     selectbuffnum=-1;
+    ifselectshovel=false;
     plant=NULL;
     plantmovie=NULL;
     timer=new QTimer(this);
@@ -156,6 +159,8 @@ Widget::Widget(QWidget *parent)
             pix.scaled(size);
             setCursor(QCursor(pix));
             selectplantnum=num;
+            selectbuffnum=-1;
+            ifselectshovel=false;
         });
     }
 
@@ -183,8 +188,32 @@ Widget::Widget(QWidget *parent)
             QCursor a(pix);
             setCursor(QCursor(pix));
             selectbuffnum=num;
+            selectplantnum=-1;
+            ifselectshovel=false;
         });
     }
+
+    //创建铲子
+    Shovel* shovel = new Shovel();
+    shovel->setFixedSize(77,55);
+    shovel->setParent(this);
+    shovel->move(710,35);
+    shovel->show();
+
+    //点击了铲子
+    connect(shovel,&Shovel::clickshovel,[=](){
+        qDebug()<<"you have touch the shovel!";
+        QPixmap pix;
+        pix.load(":/resource/images/interface/Shovel.png");
+        QSize size(50,50);
+        pix.scaled(size);
+        QCursor a(pix);
+        setCursor(QCursor(pix));
+
+        ifselectshovel=true;
+        selectbuffnum=-1;
+        selectplantnum=-1;
+    });
 
     //测试buff
 //    Buff* buff=new Buff(this,3,3,1,0);
@@ -275,7 +304,7 @@ Widget::Widget(QWidget *parent)
             (*it)->movenow++;
             if((*it)->movenow>=(*it)->moveacount){
                 (*it)->movenow=0;
-                (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
+                (*it)->label->move((*it)->label->x()-(*it)->speed,(*it)->label->y());
                 (*it)->backbloodlabel->move((*it)->label->x()+40,(*it)->label->y());
                 (*it)->bloodlabel->move((*it)->label->x()+42,(*it)->label->y()+2);
                 (*it)->bloodlabel->resize(76*((*it)->gethp())/((*it)->getfullhp()),16);
@@ -351,7 +380,7 @@ Widget::Widget(QWidget *parent)
                         (*it)->movenow++;
                         if((*it)->movenow>=(*it)->moveacount){
                             (*it)->movenow=0;
-                            (*it)->label->move((*it)->label->x()-1,(*it)->label->y());
+                            (*it)->label->move((*it)->label->x()-(*it)->speed,(*it)->label->y());
                             (*it)->backbloodlabel->move((*it)->label->x()+40,(*it)->label->y());
                             (*it)->bloodlabel->move((*it)->label->x()+42,(*it)->label->y()+2);
                             (*it)->bloodlabel->resize(76*((*it)->gethp())/((*it)->getfullhp()),16);
@@ -437,7 +466,7 @@ Widget::Widget(QWidget *parent)
                                     delete startlabel;
                                     delete a2;
                                     delete a1;
-                                    sunsum=5000;
+                                    sunsum=500;
                                     Widget* w2=new Widget();
                                     w2->show();
                                     this->close();
@@ -584,7 +613,13 @@ Widget::Widget(QWidget *parent)
         int nxtinterval=QRandomGenerator::global()->bounded(5000,10000);  //下次定时器时间
         timerzombie->setInterval(nxtinterval);
         int _x=QRandomGenerator::global()->bounded(1,6);
-        Zombie* newzombie=new Zombie(this,_x);
+        //设立一个随机数来选择生成哪一个僵尸
+        //如为0，则生成普通僵尸，如为1，则生成报纸僵尸
+        int tempsz=QRandomGenerator::global()->bounded(0,2);
+        Zombie* newzombie;
+        if(tempsz==0) newzombie=new Zombie(this,_x);
+        else newzombie=new NewspaperZombie(this,_x);
+        //newzombie=new NewspaperZombie(this,_x);
         qDebug()<<"you have the new zombie at line "<<_x;
         newzombie->updateinfo();
         zombielist.push_back(newzombie);
@@ -642,15 +677,24 @@ void Widget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     QPixmap pix;
+    //主背景
     pix.load(":/resource/images/interface/mainbackground.jpg");
 
     painter.drawPixmap(0,0,this->width(),this->height(),pix);
 
+    //植物种子栏和buff种子栏
     pix.load(":/resource/images/interface/SeedBank.png");
 
     painter.drawPixmap(10,10,pix.width()*1.5,pix.height()*1.5,pix);
 
     painter.drawPixmap(this->width()-pix.width()-10,10,pix.width(),pix.height(),pix);
+
+    //铲子栏
+    pix.load(":/resource/images/interface/ShovelBack.png");
+
+    painter.drawPixmap(700,20,90,90,pix);
+
+
 }
 
 void Widget::mousePressEvent(QMouseEvent *event){
@@ -675,8 +719,10 @@ void Widget::mousePressEvent(QMouseEvent *event){
 
  void Widget::putdownplant(int i,int j)
  {
+     //若草坪为空且能够放植物
      if(grass[i][j]->getiffree()&&grass[i][j]->getifput())
      {
+         //如果是放植物
          if(selectplantnum!=-1)
          {
              QString plantname=seedname[selectplantnum-1];
@@ -685,6 +731,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  setCursor(Qt::ArrowCursor);
                  selectplantnum=-1;
                  selectbuffnum=-1;
+                 ifselectshovel=false;
                  return;
              }
              sunsum-=sunneed[selectplantnum-1];
@@ -706,6 +753,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  setCursor(Qt::ArrowCursor);
                  selectplantnum=-1;
                  selectbuffnum=-1;
+                 ifselectshovel=false;
                  return;
              }
              grass[i][j]->setiffree(false);
@@ -724,16 +772,20 @@ void Widget::mousePressEvent(QMouseEvent *event){
              setCursor(Qt::ArrowCursor);
              selectplantnum=-1;
              selectbuffnum=-1;
+             ifselectshovel=false;
          }
          else
          {
              setCursor(Qt::ArrowCursor);
              selectplantnum=-1;
              selectbuffnum=-1;
+             ifselectshovel=false;
          }
      }
+     //若草坪不为空，有植物在上面
      else if(!grass[i][j]->getiffree())
      {
+         //如果选中了buff
          if(selectbuffnum!=-1)
          {
              QString buffname=seedname_buff[selectbuffnum-1];
@@ -742,6 +794,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  setCursor(Qt::ArrowCursor);
                  selectplantnum=-1;
                  selectbuffnum=-1;
+                 ifselectshovel=false;
                  return;
              }
              //注意狂暴可以和流血冰冻叠加
@@ -752,6 +805,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  {
                      setCursor(Qt::ArrowCursor);
                      selectbuffnum=-1;
+                     ifselectshovel=false;
                      selectplantnum=-1;
                      return;
                  }
@@ -774,6 +828,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  {
                      setCursor(Qt::ArrowCursor);
                      selectbuffnum=-1;
+                     ifselectshovel=false;
                      selectplantnum=-1;
                      return;
                  }
@@ -843,7 +898,9 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  {
                      setCursor(Qt::ArrowCursor);
                      selectbuffnum=-1;
+                     ifselectshovel=false;
                      selectplantnum=-1;
+                     ifselectshovel=false;
                      return;
                  }
                  //先判断是否已经拥有该种buff
@@ -852,6 +909,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                      setCursor(Qt::ArrowCursor);
                      selectbuffnum=-1;
                      selectplantnum=-1;
+                     ifselectshovel=false;
                      return;
                  }
                  //可以含有该buff
@@ -873,6 +931,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  {
                      setCursor(Qt::ArrowCursor);
                      selectbuffnum=-1;
+                     ifselectshovel=false;
                      selectplantnum=-1;
                      return;
                  }
@@ -927,6 +986,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  {
                      setCursor(Qt::ArrowCursor);
                      selectbuffnum=-1;
+                     ifselectshovel=false;
                      selectplantnum=-1;
                      return;
                  }
@@ -935,6 +995,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  {
                      setCursor(Qt::ArrowCursor);
                      selectbuffnum=-1;
+                     ifselectshovel=false;
                      selectplantnum=-1;
                      return;
                  }
@@ -957,6 +1018,7 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  {
                      setCursor(Qt::ArrowCursor);
                      selectbuffnum=-1;
+                     ifselectshovel=false;
                      selectplantnum=-1;
                      return;
                  }
@@ -1008,19 +1070,60 @@ void Widget::mousePressEvent(QMouseEvent *event){
                  setCursor(Qt::ArrowCursor);
                  selectplantnum=-1;
                  selectbuffnum=-1;
+                 ifselectshovel=false;
                  return;
              }
              sunsum-=sunneed_buff[selectbuffnum-1];
              sunLabel->setText(QString::number(sunsum));
              setCursor(Qt::ArrowCursor);
              selectbuffnum=-1;
+             ifselectshovel=false;
              selectplantnum=-1;
          }
+         //为拆卸植物
+         else if(ifselectshovel)
+         {
+             //删除植物空间
+             delete grass[i][j]->plant->label;
+             delete grass[i][j]->plant->movie;   //删除额外申请空间
+             for(int k=0;k<5;k++)
+             {
+                 if(grass[i][j]->plant->buffpoint[k]!=NULL)
+                 {
+                     delete grass[i][j]->plant->buffpoint[k];
+                 }
+             }
+
+             //更新草坪状态和其上的僵尸
+             grass[i][j]->plant=NULL;
+             grass[i][j]->setiffree(true);
+             for(QVector<Zombie*>::iterator it=grass[i][j]->zombielist.begin();
+                 it!=grass[i][j]->zombielist.end();it++)
+             {
+                 (*it)->setifatk(false);
+                 (*it)->changewalk();
+             }
+             //初始化鼠标状态
+             setCursor(Qt::ArrowCursor);
+             selectplantnum=-1;
+             selectbuffnum=-1;
+             ifselectshovel=false;
+
+         }
+         else
+         {
+             setCursor(Qt::ArrowCursor);
+             selectplantnum=-1;
+             selectbuffnum=-1;
+             ifselectshovel=false;
+         }
      }
+     //该草坪不允许放植物
      else
      {
          setCursor(Qt::ArrowCursor);
          selectplantnum=-1;
          selectbuffnum=-1;
+         ifselectshovel=false;
      }
  }

@@ -26,10 +26,12 @@ SOURCES += \
     globalconfig.cpp \
     grass.cpp \
     main.cpp \
+    newspaperzombie.cpp \
     pea.cpp \
     peashooter.cpp \
     plant.cpp \
     plantseed.cpp \
+    shovel.cpp \
     snowpea.cpp \
     sun.cpp \
     sunflower.cpp \
@@ -46,10 +48,12 @@ HEADERS += \
     getmap.h \
     globalconfig.h \
     grass.h \
+    newspaperzombie.h \
     pea.h \
     peashooter.h \
     plant.h \
     plantseed.h \
+    shovel.h \
     snowpea.h \
     sun.h \
     sunflower.h \

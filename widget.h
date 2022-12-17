@@ -25,8 +25,9 @@ class Widget : public QWidget
     QMediaPlayer* player;
     QMediaPlaylist* playerlist;
     Grass* grass[6][10];
-    int selectplantnum;
-    int selectbuffnum;
+    int selectplantnum; //所选择的植物num
+    int selectbuffnum;  //所选择的buffnum
+    bool ifselectshovel;    //是否选择了shovel
     Plant* plant;
     QMovie* plantmovie;
     QLabel* sunLabel;

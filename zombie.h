@@ -44,6 +44,8 @@ public:
     int bloodacount;
     bool ifdie;
 
+    int speed;  //走路速度，普通僵尸设定为1
+
     bool ifcold;    //是否处于减速状态
     bool ifblood;   //是否处于流血状态
 

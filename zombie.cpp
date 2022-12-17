@@ -27,6 +27,7 @@ Zombie::Zombie(QWidget* parent,int x)
     this->movenow=0;
     this->bloodacount=7;
     this->bloodnow=0;
+    this->speed=1;
 }
 
 void Zombie::attack(){

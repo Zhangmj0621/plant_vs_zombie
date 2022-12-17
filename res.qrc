@@ -69,5 +69,10 @@
         <file>resource/images/Cursor/violent.png</file>
         <file>resource/images/Seed/blood2.png</file>
         <file>resource/images/Seed/cold2.png</file>
+        <file>resource/images/Zombies/NewspaperZombie/Die.gif</file>
+        <file>resource/images/Zombies/NewspaperZombie/HeadAttack0.gif</file>
+        <file>resource/images/Zombies/NewspaperZombie/HeadWalk0.gif</file>
+        <file>resource/images/Zombies/NewspaperZombie/LostHeadAttack0.gif</file>
+        <file>resource/images/Zombies/NewspaperZombie/LostHeadWalk0.gif</file>
     </qresource>
 </RCC>
