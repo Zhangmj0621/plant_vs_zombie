@@ -24,6 +24,8 @@
 #include"firepea.h"
 #include"newspaperzombie.h"
 #include"shovel.h"
+#include"polevaultingzombie.h"
+#include"coneheadzombie.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -305,8 +307,8 @@ Widget::Widget(QWidget *parent)
             if((*it)->movenow>=(*it)->moveacount){
                 (*it)->movenow=0;
                 (*it)->label->move((*it)->label->x()-(*it)->speed,(*it)->label->y());
-                (*it)->backbloodlabel->move((*it)->label->x()+40,(*it)->label->y());
-                (*it)->bloodlabel->move((*it)->label->x()+42,(*it)->label->y()+2);
+                (*it)->backbloodlabel->move((*it)->label->x()+40+(*it)->polelength,(*it)->label->y());
+                (*it)->bloodlabel->move((*it)->label->x()+42+(*it)->polelength,(*it)->label->y()+2);
                 (*it)->bloodlabel->resize(76*((*it)->gethp())/((*it)->getfullhp()),16);
                 (*it)->coldbufflabel->move((*it)->backbloodlabel->x()+(*it)->backbloodlabel->width()+5,(*it)->backbloodlabel->y());
                 (*it)->bloodbufflabel->move((*it)->backbloodlabel->x()-25,(*it)->backbloodlabel->y());
@@ -381,17 +383,25 @@ Widget::Widget(QWidget *parent)
                         if((*it)->movenow>=(*it)->moveacount){
                             (*it)->movenow=0;
                             (*it)->label->move((*it)->label->x()-(*it)->speed,(*it)->label->y());
-                            (*it)->backbloodlabel->move((*it)->label->x()+40,(*it)->label->y());
-                            (*it)->bloodlabel->move((*it)->label->x()+42,(*it)->label->y()+2);
+                            (*it)->backbloodlabel->move((*it)->label->x()+40+(*it)->polelength,(*it)->label->y());
+                            (*it)->bloodlabel->move((*it)->label->x()+42+(*it)->polelength,(*it)->label->y()+2);
                             (*it)->bloodlabel->resize(76*((*it)->gethp())/((*it)->getfullhp()),16);
                             (*it)->coldbufflabel->move((*it)->backbloodlabel->x()+(*it)->backbloodlabel->width()+5,(*it)->backbloodlabel->y());
                             (*it)->bloodbufflabel->move((*it)->backbloodlabel->x()-25,(*it)->backbloodlabel->y());
                         }
 
+                        //如果该僵尸在跳跃状态
+                        if((*it)->ifinjump)
+                        {
+                            it++;
+                            continue;
+                        }
+
                         //进入新地块
                         if(j>=2)
                         {
-                            if((*it)->label->x()<=grasscolpos[j-1]-118)
+                            //进入下一格
+                            if((*it)->label->x()<=grasscolpos[j-1]-118-(*it)->polelength&& (!(*it)->iffast))
                             {
                                 (*it)->sety(j-1);
                                 grass[i][j-1]->zombielist.push_back((*it));
@@ -403,12 +413,59 @@ Widget::Widget(QWidget *parent)
                                 it=grass[i][j]->zombielist.erase(it);
                             }
                             //还可以在本块被阻挡
-                            else if((*it)->label->x()>=grasscolpos[j]-158)
+                            //可以跨栏
+                            else if((*it)->label->x()<=grasscolpos[j-1]-118-(*it)->polelength&&(*it)->iffast)
+                            {
+                                (*it)->sety(j-1);
+                                grass[i][j-1]->zombielist.push_back((*it));
+                                if(grass[i][j-1]->getiffree()==false&&!(*it)->ifdie)
+                                {
+                                    (*it)->iffast=false;
+                                    (*it)->ifinjump=true;
+                                    (*it)->changejump1();
+                                    //(*it)->label->setFixedSize(160,120);
+                                    QTimer::singleShot(1000,this,[=](){
+                                        (*it)->changejump2();
+                                    });
+
+                                    QTimer::singleShot(2000,this,[=](){
+                                        //(*it)->label->setFixedSize(160,120);
+                                        (*it)->changewalk();
+                                        (*it)->ifinjump=false;
+                                        (*it)->speed=1;
+                                    });
+                                }
+                                it=grass[i][j]->zombielist.erase(it);
+
+                            }
+                            //普通操作
+                            else if((*it)->label->x()>=grasscolpos[j]-158-(*it)->polelength&&!(*it)->iffast)
                             {
                                 if(grass[i][j]->getiffree()==false&&!(*it)->ifdie)
                                 {
                                     (*it)->setifatk(true);    //开始攻击
                                     (*it)->changeatk(); //更换gif图像
+                                }
+                                it++;
+                            }
+                            else if((*it)->label->x()>=grasscolpos[j]-158-(*it)->polelength&&(*it)->iffast)
+                            {
+                                if(grass[i][j]->getiffree()==false&&!(*it)->ifdie)
+                                {
+                                    (*it)->iffast=false;
+                                    (*it)->ifinjump=true;
+                                    (*it)->changejump1();
+                                    //(*it)->label->setFixedSize(160,120);
+                                    QTimer::singleShot(1000,this,[=](){
+                                        (*it)->changejump2();
+                                    });
+
+                                    QTimer::singleShot(2000,this,[=](){
+                                        //(*it)->label->setFixedSize(160,120);
+                                        (*it)->changewalk();
+                                        (*it)->ifinjump=false;
+                                        (*it)->speed=1;
+                                    });
                                 }
                                 it++;
                             }
@@ -420,7 +477,7 @@ Widget::Widget(QWidget *parent)
                         }
                         else
                         {
-                            if((*it)->label->x()<=grasscolpos[j-1]-118&&!(*it)->ifdie)
+                            if((*it)->label->x()<=grasscolpos[j-1]-118-(*it)->polelength&&!(*it)->ifdie)
                             {
                                 it=grass[i][j]->zombielist.erase(it);
                                 //你输了，或者引入小推车
@@ -500,7 +557,7 @@ Widget::Widget(QWidget *parent)
                         for(QVector<Zombie*>::iterator it2=grass[i][j]->zombielist.begin();
                             it2!=grass[i][j]->zombielist.end();it2++)
                         {
-                            if((*it2)->label->x()+80<=tempx)
+                            if((*it2)->label->x()+80+(*it2)->polelength<=tempx)
                             {
                                 //删除子弹
                                 Bullet* temp=(*it);
@@ -526,7 +583,7 @@ Widget::Widget(QWidget *parent)
                             for(QVector<Zombie*>::iterator it2=zombielist.begin();
                                 it2!=zombielist.end();it2++)
                             {
-                                if((*it2)->getx()==(*it)->x&&(*it2)->label->x()+80<=tempx)
+                                if((*it2)->getx()==(*it)->x&&(*it2)->label->x()+80+(*it2)->polelength<=tempx)
                                 {
                                     //删除子弹
                                     Bullet* temp=(*it);
@@ -615,10 +672,14 @@ Widget::Widget(QWidget *parent)
         int _x=QRandomGenerator::global()->bounded(1,6);
         //设立一个随机数来选择生成哪一个僵尸
         //如为0，则生成普通僵尸，如为1，则生成报纸僵尸
-        int tempsz=QRandomGenerator::global()->bounded(0,2);
+        //如为2，则生成跨栏僵尸
+        //int tempsz=QRandomGenerator::global()->bounded(0,4);
+        int tempsz=3;
         Zombie* newzombie;
         if(tempsz==0) newzombie=new Zombie(this,_x);
-        else newzombie=new NewspaperZombie(this,_x);
+        else if(tempsz==1) newzombie=new NewspaperZombie(this,_x);
+        else if(tempsz==2) newzombie=new PoleVaultingZombie(this,_x);
+        else newzombie=new ConeheadZombie(this,_x);
         //newzombie=new NewspaperZombie(this,_x);
         qDebug()<<"you have the new zombie at line "<<_x;
         newzombie->updateinfo();

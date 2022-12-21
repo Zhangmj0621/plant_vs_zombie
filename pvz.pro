@@ -20,6 +20,7 @@ SOURCES += \
     buff.cpp \
     buffseed.cpp \
     bullet.cpp \
+    coneheadzombie.cpp \
     crator.cpp \
     firepea.cpp \
     getmap.cpp \
@@ -31,6 +32,7 @@ SOURCES += \
     peashooter.cpp \
     plant.cpp \
     plantseed.cpp \
+    polevaultingzombie.cpp \
     shovel.cpp \
     snowpea.cpp \
     sun.cpp \
@@ -43,6 +45,7 @@ HEADERS += \
     buff.h \
     buffseed.h \
     bullet.h \
+    coneheadzombie.h \
     crator.h \
     firepea.h \
     getmap.h \
@@ -53,6 +56,7 @@ HEADERS += \
     peashooter.h \
     plant.h \
     plantseed.h \
+    polevaultingzombie.h \
     shovel.h \
     snowpea.h \
     sun.h \

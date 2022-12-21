@@ -26,6 +26,7 @@ protected:
     bool ifatk;
 public:
     int x,y;
+    int num;    //僵尸编号，0为普通僵尸，1为报纸僵尸，2为跨栏僵尸,3为路障僵尸
     QLabel* label;
     QLabel* backbloodlabel;
     QLabel* bloodlabel;
@@ -48,6 +49,9 @@ public:
 
     bool ifcold;    //是否处于减速状态
     bool ifblood;   //是否处于流血状态
+    bool iffast;    //是否可以跨栏
+    bool ifinjump;  //是否在跳跃状态中
+    int polelength;
 
     Zombie(QWidget* parent,int x);
 
@@ -68,13 +72,17 @@ public:
 
     virtual void behit(int atk,bool ifcold,bool ifblood);
 
-    void changeatk();
-    void changewalk();
-    void changedie();
-    void changedelete();
+    void changeatk();   //更换攻击形态
+    void changewalk();  //更换走路形态
+    void changedie();   //更换死亡形态
+    void changedelete();    //更换消失形态
+    virtual void changejump1(){};  //切换跳跃形态，仅对撑杆僵尸所留接口
+    virtual void changejump2(){};
+    void changenormalzombie();  //切换普通僵尸形态，对于路障和铁桶僵尸生效
     virtual void attack();
 
     virtual void updateinfo();
+
 
 signals:
     void hit(int atk,bool ifcold,bool ifblood);

@@ -28,6 +28,9 @@ Zombie::Zombie(QWidget* parent,int x)
     this->bloodacount=7;
     this->bloodnow=0;
     this->speed=1;
+    this->num=0;
+    this->polelength=0;
+    this->ifinjump=false;
 }
 
 void Zombie::attack(){
@@ -122,6 +125,7 @@ void Zombie::behit(int atk,bool ifcold,bool ifblood){
     if(hp>atk)
     {
         hp-=atk;
+        if(num==3&&hp<250&&hp+atk>=250) changenormalzombie();
         if(!this->ifcold&&ifcold) this->coldbufflabel->show();
         if(!this->ifblood&&ifblood) this->bloodbufflabel->show();
         if(!this->ifcold) this->ifcold=ifcold;
@@ -140,4 +144,21 @@ void Zombie::behit(int atk,bool ifcold,bool ifblood){
             emit this->die();
         });
     }
+}
+
+//切换为普通僵尸形态，包括更新僵尸动画
+void Zombie::changenormalzombie(){
+    QMovie* movie1;
+    QString normalzombie;
+    if(ifatk) normalzombie=":/resource/images/Zombies/Zombie/ZombieAttack.gif";
+    else  normalzombie=":/resource/images/Zombies/Zombie/Zombie.gif";
+    movie1=new QMovie(normalzombie);
+    movie1->resized(QSize(50,50));
+    movie1->start();
+    label->setMovie(movie1);
+    //label->show();
+    delete movie;
+    movie=movie1;
+    this->zombiemovie=":/resource/images/Zombies/Zombie/Zombie.gif";
+    this->attackmovie=":/resource/images/Zombies/Zombie/ZombieAttack.gif";
 }

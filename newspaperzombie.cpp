@@ -10,4 +10,5 @@ NewspaperZombie::NewspaperZombie(QWidget* parent,int x):Zombie(parent,x)
     this->zombieattackloseheadmovie=":/resource/images/Zombies/NewspaperZombie/LostHeadAttack0.gif";
     this->diemovie=":/resource/images/Zombies/NewspaperZombie/Die.gif";
     this->speed=2;
+    this->num=1;
 }
