@@ -85,5 +85,7 @@
         <file>resource/images/Zombies/PoleVaultingZombie/PoleZombie.gif</file>
         <file>resource/images/Zombies/ConeheadZombie/ConeheadZombie.gif</file>
         <file>resource/images/Zombies/ConeheadZombie/ConeheadZombieAttack.gif</file>
+        <file>resource/images/Zombies/BucketheadZombie/BucketheadZombie.gif</file>
+        <file>resource/images/Zombies/BucketheadZombie/BucketheadZombieAttack.gif</file>
     </qresource>
 </RCC>

@@ -24,11 +24,11 @@ void PoleVaultingZombie::updateinfo()
     label=new QLabel(parent);
     movie=new QMovie(this->fastwalkpix);
     movie->resized(QSize(100,50));
-    label->setFixedSize(300,180);
+    label->setFixedSize(300,200);
 
     movie->start();
     label->setMovie(movie);
-    label->move(parent->width()+label->width(),grassrowpos[x-1]/3+grassrowpos[x]*2/3-140);
+    label->move(parent->width()+label->width(),grassrowpos[x-1]/3+grassrowpos[x]*2/3-160);
     label->show();
 
     backbloodlabel=new QLabel(parent);

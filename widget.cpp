@@ -26,6 +26,7 @@
 #include"shovel.h"
 #include"polevaultingzombie.h"
 #include"coneheadzombie.h"
+#include"bucketheadzombie.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -50,7 +51,13 @@ Widget::Widget(QWidget *parent)
     timer->start(30);
     timersun->start(10000);
     timerzombie=new QTimer(this);
-    timerzombie->start(5000);
+    timerzombie->start(15000);
+
+    //初始危险等级为1
+    thezombielevel=1;
+    zombienamejs=0;
+    zombienumtotal=0;
+    diezombienum=0;
 
 
     //僵尸每行数量初值设为0
@@ -74,6 +81,19 @@ Widget::Widget(QWidget *parent)
     a1->setEndValue(QRect(loselabel->x(),-loselabel->y(),loselabel->width(),loselabel->height()));
     a1->setEasingCurve(QEasingCurve::OutBounce);
 
+    //创建胜利图片
+    winlabel=new QLabel(this);
+    winpix.load(":/resource/images/interface/trophy.png");
+    winlabel->setGeometry(0,0,winpix.width(),winpix.height());
+    winlabel->setPixmap(winpix);
+    winlabel->move((this->width()-winpix.width())/2,-winpix.height());
+
+    //设置胜利动画
+    a3=new QPropertyAnimation(winlabel,"geometry");
+    a3->setDuration(1000);
+    a3->setStartValue(QRect(winlabel->x(),winlabel->y(),winlabel->width(),winlabel->height()));
+    a3->setEndValue(QRect(winlabel->x(),-winlabel->y(),winlabel->width(),winlabel->height()));
+    a3->setEasingCurve(QEasingCurve::OutBounce);
 
     //创建开始图片动画
     startlabel=new QLabel(this);
@@ -523,7 +543,7 @@ Widget::Widget(QWidget *parent)
                                     delete startlabel;
                                     delete a2;
                                     delete a1;
-                                    sunsum=500;
+                                    sunsum=100;
                                     Widget* w2=new Widget();
                                     w2->show();
                                     this->close();
@@ -669,17 +689,108 @@ Widget::Widget(QWidget *parent)
     connect(timerzombie,&QTimer::timeout,[=](){
         int nxtinterval=QRandomGenerator::global()->bounded(5000,10000);  //下次定时器时间
         timerzombie->setInterval(nxtinterval);
+        if(thezombielevel>=3)
+        {
+            nxtinterval=QRandomGenerator::global()->bounded(3000,5000);  //下次定时器时间
+            timerzombie->setInterval(nxtinterval);
+        }
+        if(thezombielevel>=6&&zombienumtotal==diezombienum)
+        {
+            //胜利啦
+            this->islose=true;
+            timersun->stop();
+            timer->stop();
+            timerzombie->stop();
+            //显示失败图片
+
+            a3->start();
+            QTimer::singleShot(5000,this,[=](){
+                //创建新窗口
+                //删除原有内存
+                delete player;
+                delete playerlist;
+                for(int i=1;i<=grassrow;i++)
+                    for(int j=1;j<=grasscol;j++)
+                    {
+                        delete grass[i][j];
+                    }
+                delete plant;
+                //delete plantmovie;
+                delete sunLabel;
+                for(QVector<Sun*>::iterator it=sunlist.begin();
+                    it!=sunlist.end();)
+                {
+                    Sun* p=(*it);
+                    it=sunlist.erase(it);
+                    delete p;
+                }
+                delete timer;
+                delete timersun;
+                delete timerzombie;
+                for(QVector<Zombie*>::iterator it=zombielist.begin();
+                    it!=zombielist.end();)
+                {
+                    Zombie* p=(*it);
+                    it=zombielist.erase(it);
+                    delete p;
+                }
+                delete loselabel;
+                delete startlabel;
+                delete a2;
+                delete a1;
+                sunsum=100;
+                Widget* w2=new Widget();
+                w2->show();
+                this->close();
+
+                this->~Widget();
+                return;
+            });
+        }
         int _x=QRandomGenerator::global()->bounded(1,6);
         //设立一个随机数来选择生成哪一个僵尸
         //如为0，则生成普通僵尸，如为1，则生成报纸僵尸
         //如为2，则生成跨栏僵尸
         //int tempsz=QRandomGenerator::global()->bounded(0,4);
-        int tempsz=3;
+        //int tempsz=4;
+        int tempsz;
+        if(thezombielevel==1) tempsz=0;
+        else if(thezombielevel==2) tempsz=QRandomGenerator::global()->bounded(0,2);
+        else if(thezombielevel==3) tempsz=QRandomGenerator::global()->bounded(0,3);
+        else if(thezombielevel==4) tempsz=QRandomGenerator::global()->bounded(0,5);
+        else if(thezombielevel==5)
+        {
+            tempsz=QRandomGenerator::global()->bounded(0,5);
+            nxtinterval=QRandomGenerator::global()->bounded(1000,3000);  //下次定时器时间
+            timerzombie->setInterval(nxtinterval);
+        }
+        else
+        {
+            return;
+        }
+        //tempsz=4;
         Zombie* newzombie;
         if(tempsz==0) newzombie=new Zombie(this,_x);
-        else if(tempsz==1) newzombie=new NewspaperZombie(this,_x);
-        else if(tempsz==2) newzombie=new PoleVaultingZombie(this,_x);
-        else newzombie=new ConeheadZombie(this,_x);
+        else if(tempsz==3) newzombie=new NewspaperZombie(this,_x);
+        else if(tempsz==4) newzombie=new PoleVaultingZombie(this,_x);
+        else if(tempsz==1) newzombie=new ConeheadZombie(this,_x);
+        else if(tempsz==2) newzombie=new BucketheadZombie(this,_x);
+        else
+        {
+            return;
+        }
+        zombienamejs++;
+        zombienumtotal++;
+        if(thezombielevel!=5&&zombienamejs>=5)
+        {
+            thezombielevel++;
+            zombienamejs=0;
+        }
+        else if(thezombielevel==5&&zombienamejs>=20)
+        {
+            thezombielevel++;
+            zombienamejs=0;
+        }
         //newzombie=new NewspaperZombie(this,_x);
         qDebug()<<"you have the new zombie at line "<<_x;
         newzombie->updateinfo();
@@ -688,6 +799,7 @@ Widget::Widget(QWidget *parent)
             newzombie->behit(atk,ifcold,ifblood);
         });
         connect(newzombie,&Zombie::die,[=](){
+            diezombienum++;
             newzombie->changedie();
             if(newzombie->gety()!=10)
             {

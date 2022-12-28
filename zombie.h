@@ -26,7 +26,7 @@ protected:
     bool ifatk;
 public:
     int x,y;
-    int num;    //僵尸编号，0为普通僵尸，1为报纸僵尸，2为跨栏僵尸,3为路障僵尸
+    int num;    //僵尸编号，0为普通僵尸，1为报纸僵尸，2为跨栏僵尸,3为路障僵尸,4为铁桶僵尸
     QLabel* label;
     QLabel* backbloodlabel;
     QLabel* bloodlabel;

@@ -125,7 +125,7 @@ void Zombie::behit(int atk,bool ifcold,bool ifblood){
     if(hp>atk)
     {
         hp-=atk;
-        if(num==3&&hp<250&&hp+atk>=250) changenormalzombie();
+        if((num==3 || num==4)&&hp<250&&hp+atk>=250) changenormalzombie();
         if(!this->ifcold&&ifcold) this->coldbufflabel->show();
         if(!this->ifblood&&ifblood) this->bloodbufflabel->show();
         if(!this->ifcold) this->ifcold=ifcold;

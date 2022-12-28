@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    bucketheadzombie.cpp \
     buff.cpp \
     buffseed.cpp \
     bullet.cpp \
@@ -42,6 +43,7 @@ SOURCES += \
     zombie.cpp
 
 HEADERS += \
+    bucketheadzombie.h \
     buff.h \
     buffseed.h \
     bullet.h \

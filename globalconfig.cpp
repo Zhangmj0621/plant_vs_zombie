@@ -18,7 +18,7 @@ int sunneed[8]={50,100,50,0,0,0,0,0};
 //植物配置
 int plantheight=120;
 int plantwidth=90;
-int sunsum=500;
+int sunsum=100;
 
 //获取草编号
 QPair<int,int> thegrass(int x,int y){
